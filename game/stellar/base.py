@@ -1,4 +1,6 @@
-import pygame, keys, tools
+import pygame
+import keys
+import tools
 
 class Base:
 	def __init__(self):
@@ -31,6 +33,7 @@ class Base:
 
 	def stop(self):
 		self.running = False
+		quit()
 
 	def start(self):
 		self.screen = pygame.display.set_mode(self.size)

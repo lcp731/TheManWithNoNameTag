@@ -5,6 +5,11 @@ stellar.log("Loading resources")
 FONT_ARIAL_WHITE_30 = stellar.tools.Font("resources/fonts/arial.ttf", 30, (255, 255, 255))
 FONT_WESTERN_WHITE_30 = stellar.tools.Font("resources/fonts/Pixel-Western.ttf", 30, (255, 255, 255))
 
+AUDIO_ZOMBIE_HIT_SQUAD = stellar.sound.Music("resources/audio/Zombie_Hit_Squad.mp3")
+AUDIO_GUNSHOT = stellar.sound.Effect("resources/audio/GUN-Shot.wav")
+AUDIO_HOVER_CLICK = stellar.sound.Effect("resources/audio/click.wav")
+AUDIO_PRESS_CLICK = stellar.sound.Effect("resources/audio/click4.wav")
+
 _TILESET = stellar.sprites.LoadSheet("resources/images/tileset.png",
 	(128, 96, 64, 64),		# Wall
 	(128, 160, 64, 64),		# Shelves 1

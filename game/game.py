@@ -1,4 +1,6 @@
+import time
 import stellar
+import resources
 import room_menu
 import room_game
 
@@ -13,9 +15,12 @@ class Game(stellar.base.Base):
 
 		self.set_room("room_menu")
 
+		resources.AUDIO_ZOMBIE_HIT_SQUAD.play()
+		resources.AUDIO_ZOMBIE_HIT_SQUAD.set_volume(0.2)
+
 	# Called by the menu buttons when 'start' is pressed
 	def start_game(self):
-		stellar.log("Start pressed")
+		stellar.log("Starting game")
 		self.set_room("room_game")
 
 game = Game()

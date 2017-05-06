@@ -18,7 +18,13 @@ class Room(stellar.rooms.Room):
 			stellar.sprites.Text("Start", resources.FONT_ARIAL_WHITE_30, xoffset=5, yoffset=5)
 		)
 
-		self.btn_start = stellar.objects.Button(spr_start_default, spr_start_hover, spr_start_down)
+		self.btn_start = stellar.objects.Button(
+			spr_start_default,
+			spr_start_hover,
+			spr_start_down,
+			click_sound = resources.AUDIO_PRESS_CLICK,
+			hover_sound = resources.AUDIO_HOVER_CLICK
+		)
 		self.btn_start.when_clicked(self.start_game)
 		self.btn_start.move_to(10, 10)
 

@@ -16,10 +16,6 @@ class GridTile(stellar.objects.Object):
 		)
 		self.set_sprite("default")
 
-	# def _draw(self):
-	# 	self.get_current_sprite().draw(self.room, self.get_position(), self.scale)
-	# 	self.draw()
-
 class Room(stellar.rooms.Room):
 	def __init__(self):
 		stellar.rooms.Room.__init__(self)
@@ -67,3 +63,6 @@ class Room(stellar.rooms.Room):
 			self.cam_x -= self.cam_speed
 		if buttons[stellar.keys.S_HELD][stellar.keys.K_d]:
 			self.cam_x += self.cam_speed
+
+		if buttons[stellar.keys.S_PUSHED][stellar.keys.K_SPACE]:
+			resources.AUDIO_GUNSHOT.play()

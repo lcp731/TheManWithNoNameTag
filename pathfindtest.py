@@ -18,4 +18,3 @@ for z in range(30*30*.33):
     random.choice(grid.nodes).blocked = True
 
 engine = stellar.base.Base()
-    

@@ -32,6 +32,7 @@ class Room:
 
 	def _logic(self):
 		self.objects = filter(lambda x: x.enabled, self.all_objects)
+		# self.objects = sorted(self.objects, key=lambda x: x.layer)
 
 		for obj in self.objects:
 			obj._logic()
