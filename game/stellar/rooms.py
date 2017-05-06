@@ -8,6 +8,9 @@ class Room:
 		self.active = False
 		self.size = None
 
+	def center(self):
+		return self.game.center()
+
 	def game_link(self, game):
 		self.game = game
 		self.size = self.game.size
@@ -32,7 +35,7 @@ class Room:
 
 	def _logic(self):
 		self.objects = filter(lambda x: x.enabled, self.all_objects)
-		# self.objects = sorted(self.objects, key=lambda x: x.layer)
+		self.objects = sorted(self.objects, key=lambda x: x.layer)
 
 		for obj in self.objects:
 			obj._logic()

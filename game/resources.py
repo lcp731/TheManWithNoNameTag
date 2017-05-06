@@ -10,7 +10,22 @@ AUDIO_GUNSHOT = stellar.sound.Effect("resources/audio/GUN-Shot.wav")
 AUDIO_HOVER_CLICK = stellar.sound.Effect("resources/audio/click.wav")
 AUDIO_PRESS_CLICK = stellar.sound.Effect("resources/audio/click4.wav")
 
-_TILESET = stellar.sprites.LoadSheet("resources/images/tileset.png",
+IMGS = stellar.sprites.LoadSheet(
+	stellar.sprites.Image("resources/images/spritesheet.png"),
+	(0, 0, 64, 64),
+	(64, 0, 64, 64),
+	(128, 0, 64, 64),
+	(192, 0, 64, 64),
+	(256, 0, 64, 64),
+	(320, 0, 64, 64),
+	(384, 0, 64, 64),
+	(448, 0, 64, 64),
+	(512, 0, 64, 64),
+	(576, 0, 64, 64)
+)
+
+_TILESET = stellar.sprites.LoadSheet(
+	stellar.sprites.Image("resources/images/tileset.png"),
 	(128, 96, 64, 64),		# Wall
 	(128, 160, 64, 64),		# Shelves 1
 	(192, 160, 64, 64),		# Shelves 2

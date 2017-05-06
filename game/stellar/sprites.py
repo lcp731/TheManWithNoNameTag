@@ -5,6 +5,7 @@ class Sprite:
 	def __init__(self, xoffset=0, yoffset=0):
 		self.xoffset = xoffset
 		self.yoffset = yoffset
+		self.size = (0, 0)
 
 		self.hitbox = hitboxes.Hitbox()
 
@@ -16,6 +17,7 @@ class Box(Sprite):
 		Sprite.__init__(self, xoffset=xoffset, yoffset=yoffset)
 		self.width = width
 		self.height = height
+		self.size = (self.width, self.height)
 		self.color = color
 
 				
@@ -30,6 +32,7 @@ class BoxOutline(Sprite):
 		Sprite.__init__(self, xoffset=xoffset, yoffset=yoffset)
 		self.width = width
 		self.height = height
+		self.size = (self.width, self.height)
 		self.color = color
 		self.lines = [(0,0),(width,0),(width,height),(0,height)]
 		self.linewidth = linewidth
@@ -48,6 +51,7 @@ class Ellipse(Sprite):
 		Sprite.__init__(self, xoffset=xoffset, yoffset=yoffset)
 		self.width = width
 		self.height = height
+		self.size = (self.width, self.height)
 		self.color = color
 
 		self.hitbox = hitboxes.Ellipse(self.width, self.height)
@@ -73,6 +77,13 @@ class Image(Sprite):
 		self.size = self.surf.get_rect().size
 
 		self.hitbox = hitboxes.Box(*self.size)
+
+	def get_section(self, section):
+		cropped = pygame.Surface(section[-2:])
+		cropped.blit(self.surf, (0, 0), section)
+		new = Image(cropped)
+		print new.size
+		return new
 
 	def replace_color(self, find_color, replace_color):
 		for x in xrange(self.size[0]):
@@ -103,7 +114,6 @@ class Text(Sprite):
 		txt = pygame.transform.scale(self.surf, size)
 		room.draw_blit(txt, posn)
 
-
 class Compound(Sprite):
 	def __init__(self, *sprites):
 		Sprite.__init__(self)
@@ -119,11 +129,34 @@ class Compound(Sprite):
 			sprite.draw(room, posn)
 
 def LoadSheet(image, *sections):
+	pygame.init()
 	sprites = []
-	sheet = pygame.image.load(image)
 	for section in sections:
-		cropped = pygame.Surface(section[:2])
-		cropped.blit(sheet, (0, 0), section)
-		img = Image(cropped)
-		sprites.append(img)
+		new = image.get_section(section)
+		sprites.append(new)
 	return sprites
+
+class Animation(Sprite):
+	def __init__(self, *sprites):
+		Sprite.__init__(self)
+		self.sprites = sprites
+		self.frames = len(self.sprites)
+		self.rate = 60
+		self.counter = 0
+		self.frame = 0
+		self.amimated = True
+
+	def pause(self):
+		self.amimated = False
+
+	def resume(self):
+		self.amimated = True
+
+	def set_rate(self, rate):
+		self.rate = rate
+
+	def draw(self, room, posn, scale=1):
+		self.frame = (self.counter / self.rate) % self.frames
+		self.size = self.sprites[self.frame].size
+		self.sprites[self.frame].draw(room, posn, scale=scale)
+		self.counter += 1

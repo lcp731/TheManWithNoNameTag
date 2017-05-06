@@ -5,6 +5,8 @@ class Room(stellar.rooms.Room):
 	def __init__(self):
 		stellar.rooms.Room.__init__(self)
 
+		self.background = (255, 255, 255)
+
 		spr_start_default = stellar.sprites.Compound(
 			stellar.sprites.Box((120, 0, 0), 180, 50),
 			stellar.sprites.Text("Start", resources.FONT_ARIAL_WHITE_30, xoffset=5, yoffset=5)

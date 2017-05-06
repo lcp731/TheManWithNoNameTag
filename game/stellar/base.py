@@ -22,6 +22,9 @@ class Base:
 	def get_current_room(self):
 		return self.rooms[self.current_room]
 
+	def center(self):
+		return map(lambda x: int(x/2), list(self.size))
+
 	def add_room(self, name, room):
 		room.game_link(self)
 		self.rooms[name] = room
