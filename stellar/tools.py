@@ -1,6 +1,8 @@
 import pygame
 import math
 
+pygame.init()
+
 class Font(pygame.font.Font):
 	def __init__(self, path, size, color, background=None, antialias=True, underline=False, bold=False, italic=False):
 		pygame.font.Font.__init__(self, path, size)
