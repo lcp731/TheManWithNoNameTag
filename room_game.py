@@ -6,6 +6,8 @@ class GridTile(stellar.objects.Object):
 	def __init__(self, x, y):
 		stellar.objects.Object.__init__(self)
 
+		self.add_sprite()
+
 		self.grid_x = x
 		self.grid_y = y
 
@@ -17,4 +19,7 @@ class Room(stellar.rooms.Room):
 		self.grid = {}
 
 		for x, y in tools.itergrid(*self.grid_dims):
-			self.grid[x, y] = GridTile(x, y)
+			nt = GridTile(x, y)
+			self.grid[x, y] = nt
+
+		print self.grid
