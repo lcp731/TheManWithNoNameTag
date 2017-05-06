@@ -2,22 +2,6 @@ import stellar
 import room_menu
 import room_game
 
-import sys
-
-def enable_vsync():
-    if sys.platform != 'darwin':
-        return
-    try:
-        import ctypes
-        import ctypes.util
-        ogl = ctypes.cdll.LoadLibrary(ctypes.util.find_library("OpenGL"))
-        # set v to 1 to enable vsync, 0 to disable vsync
-        v = ctypes.c_int(1)
-        ogl.CGLSetParameter(ogl.CGLGetCurrentContext(), ctypes.c_int(222), ctypes.pointer(v))
-    except:
-        print "Unable to set vsync mode, using driver defaults"
-
-
 class Game(stellar.base.Base):
 	def __init__(self):
 		stellar.base.Base.__init__(self)
