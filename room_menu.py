@@ -7,15 +7,15 @@ class Room(stellar.rooms.Room):
 
 		spr_start_default = stellar.sprites.Compound(
 			stellar.sprites.Box((120, 0, 0), 180, 50),
-			stellar.sprites.Text("Start", resources.ARIAL_WHITE_30, xoffset=5, yoffset=5)
+			stellar.sprites.Text("Start", resources.FONT_ARIAL_WHITE_30, xoffset=5, yoffset=5)
 		)
 		spr_start_hover = stellar.sprites.Compound(
 			stellar.sprites.Box((180, 0, 0), 180, 50),
-			stellar.sprites.Text("Start", resources.ARIAL_WHITE_30, xoffset=5, yoffset=5)
+			stellar.sprites.Text("Start", resources.FONT_ARIAL_WHITE_30, xoffset=5, yoffset=5)
 		)
 		spr_start_down = stellar.sprites.Compound(
 			stellar.sprites.Box((250, 0, 0), 180, 50),
-			stellar.sprites.Text("Start", resources.ARIAL_WHITE_30, xoffset=5, yoffset=5)
+			stellar.sprites.Text("Start", resources.FONT_ARIAL_WHITE_30, xoffset=5, yoffset=5)
 		)
 
 		self.btn_start = stellar.objects.Button(spr_start_default, spr_start_hover, spr_start_down)
