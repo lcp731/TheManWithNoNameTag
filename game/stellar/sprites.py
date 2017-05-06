@@ -82,8 +82,16 @@ class Image(Sprite):
 		cropped = pygame.Surface(section[-2:])
 		cropped.blit(self.surf, (0, 0), section)
 		new = Image(cropped)
-		print new.size
 		return new
+
+	# When it's permenant and you don't want performance to take a hit
+	def perma_scale(self, scale=None, width=None, height=None):
+		if scale:
+			size = map(lambda x: int(x*scale), self.size)
+		else:
+			size = (width, height)
+		self.surf = pygame.transform.scale(self.surf, size)
+		return self
 
 	def replace_color(self, find_color, replace_color):
 		for x in xrange(self.size[0]):
@@ -157,6 +165,8 @@ class Animation(Sprite):
 
 	def draw(self, room, posn, scale=1):
 		self.frame = (self.counter / self.rate) % self.frames
-		self.size = self.sprites[self.frame].size
+		self.sprites[self.frame].xoffset = self.xoffset
+		self.sprites[self.frame].yoffset = self.yoffset
 		self.sprites[self.frame].draw(room, posn, scale=scale)
+		self.size = self.sprites[self.frame].size
 		self.counter += 1

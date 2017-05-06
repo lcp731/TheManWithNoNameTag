@@ -10,10 +10,15 @@ class GridTile(stellar.objects.Object):
 		stellar.objects.Object.__init__(self)
 
 		self.tilesize = tilesize
+		self.grid_x = x
+		self.grid_y = y
 
-		self.add_sprite("default",
-			random.choice(resources.ARRAY_TILE_SHELVES_64)
-		)
+		if self.grid_y%5:
+			sprite = random.choice(resources.ARRAY_TILE_FLOOR_64)
+		else:
+			sprite = random.choice(resources.ARRAY_TILE_SHELVES_64)
+
+		self.add_sprite("default", sprite)
 		self.set_sprite("default")
 
 	def draw(self):
@@ -26,26 +31,11 @@ class Player(stellar.objects.Object):
 	def __init__(self):
 		stellar.objects.Object.__init__(self)
 		animated = stellar.sprites.Animation(*resources.IMGS)
+		animated.xoffset = -32
+		animated.yoffset = -32
 		animated.set_rate(20)
 		self.add_sprite("default", animated)
 		self.set_sprite("default")
-
-	def in_cambox(self):
-		x_range = xrange(self.room.cambox_border, self.room.size[0]-self.room.cambox_border)
-		y_range = xrange(self.room.cambox_border, self.room.size[1]-self.room.cambox_border)
-		spr = self.get_current_sprite()
-		return (self.x+(spr.size[0]/2) in x_range) and (self.y+(spr.size[0]/2) in y_range)
-
-	def control(self, buttons, mousepos):
-		if self.in_cambox():
-			if buttons[stellar.keys.S_HELD][stellar.keys.K_UP]:
-				self.y -= self.room.move_speed
-			if buttons[stellar.keys.S_HELD][stellar.keys.K_DOWN]:
-				self.y += self.room.move_speed
-			if buttons[stellar.keys.S_HELD][stellar.keys.K_LEFT]:
-				self.x -= self.room.move_speed
-			if buttons[stellar.keys.S_HELD][stellar.keys.K_RIGHT]:
-				self.x += self.room.move_speed
 
 class Room(stellar.rooms.Room):
 	def __init__(self):
@@ -104,16 +94,20 @@ class Room(stellar.rooms.Room):
 		self.draw()
 
 	def control(self, buttons, mousepos):
-		stellar.log(self.player.in_cambox())
-		if not self.player.in_cambox():
-			if buttons[stellar.keys.S_HELD][stellar.keys.K_UP]:
-				self.cam_y -= self.move_speed
-			if buttons[stellar.keys.S_HELD][stellar.keys.K_DOWN]:
-				self.cam_y += self.move_speed
-			if buttons[stellar.keys.S_HELD][stellar.keys.K_LEFT]:
-				self.cam_x -= self.move_speed
-			if buttons[stellar.keys.S_HELD][stellar.keys.K_RIGHT]:
-				self.cam_x += self.move_speed
+		deltaX = 0
+		deltaY = 0
+
+		if buttons[stellar.keys.S_HELD][stellar.keys.K_UP]:
+			deltaY -= self.move_speed
+		if buttons[stellar.keys.S_HELD][stellar.keys.K_DOWN]:
+			deltaY += self.move_speed
+		if buttons[stellar.keys.S_HELD][stellar.keys.K_LEFT]:
+			deltaX -= self.move_speed
+		if buttons[stellar.keys.S_HELD][stellar.keys.K_RIGHT]:
+			deltaX += self.move_speed
 
 		if buttons[stellar.keys.S_PUSHED][stellar.keys.K_SPACE]:
 			resources.AUDIO_GUNSHOT.play()
+
+		self.cam_x += deltaX
+		self.cam_y += deltaY
