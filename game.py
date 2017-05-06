@@ -19,6 +19,5 @@ class Game(stellar.base.Base):
 	def start_game(self):
 		self.set_room("room_game")
 
-enable_vsync()
 game = Game()
 game.start()
