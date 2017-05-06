@@ -2,12 +2,12 @@ import pygame
 import tools
 
 class Node:
-	def __init__(self):
+	def __init__(self, x, y):
 		self.neighbors = []
 		self.moveCosts = []
 		self.blocked = False
-		self.x = 0
-		self.y = 0
+		self.x = x
+		self.y = y
 		self.fScore = 0
 		self.gScore = 0
 		self.moveScore = 0
