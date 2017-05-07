@@ -36,6 +36,7 @@ class Base:
 
 	def stop(self):
 		self.running = False
+		self.on_stop()
 		quit()
 
 	def start(self):
@@ -43,6 +44,8 @@ class Base:
 		pygame.display.set_caption(self.title)
 
 		self.running = True
+
+		self.on_start()
 
 		while self.running:
 			self.events = pygame.event.get()
@@ -67,4 +70,10 @@ class Base:
 			self.frame += 1
 
 	def logic(self):
+		pass
+
+	def on_start(self):
+		pass
+
+	def on_stop(self):
 		pass
