@@ -1,5 +1,3 @@
-import inspect
-import time
 import base
 import hitboxes
 import keys
@@ -11,9 +9,5 @@ import sound
 
 __authors__ = ["LeapBeforeYouLook", "Ramaraunt"]
 
-def log(*msgs):
-	msgs = map(str, msgs)
-	frame, filename, line_number, function_name, lines, index = inspect.getouterframes(inspect.currentframe())[1]
-	string = "[STELLAR] %s, %s - %s" % (function_name, filename, ", ".join(msgs))
-	print string
 
+log = tools.log

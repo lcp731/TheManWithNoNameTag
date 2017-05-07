@@ -1,6 +1,7 @@
 import pygame
 import math
 import random
+import inspect
 
 pygame.init()
 
@@ -45,3 +46,24 @@ def random_rgb():
 	g = random.randint(0, 255)
 	b = random.randint(0, 255)
 	return r, g, b
+
+def scale_image(image, **kwargs):
+	image.perma_scale(**kwargs)
+	return image
+
+def log(*msgs):
+	msgs = map(str, msgs)
+	frame, filename, line_number, function_name, lines, index = inspect.getouterframes(inspect.currentframe())[1]
+	string = "[STELLAR] %s, %s - %s" % (function_name, filename, ", ".join(msgs))
+	print string
+
+def load_sheet(image, *sections):
+	sprites = []
+	for section in sections:
+		new = image.get_section(section)
+		sprites.append(new)
+	return sprites
+
+def transform_sprites(array, scale):
+	for spr in array:
+		spr.perma_scale(scale)

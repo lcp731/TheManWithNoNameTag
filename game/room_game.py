@@ -13,10 +13,7 @@ class GridTile(stellar.objects.Object):
 		self.grid_x = x
 		self.grid_y = y
 
-		if self.grid_y%5:
-			sprite = random.choice(resources.ARRAY_TILE_FLOOR_64)
-		else:
-			sprite = random.choice(resources.ARRAY_TILE_SHELVES_64)
+		sprite = resources.TILE_TL0_64
 
 		self.add_sprite("default", sprite)
 		self.set_sprite("default")

@@ -24,8 +24,8 @@ class Game(stellar.base.Base):
 	def start_game(self):
 		stellar.log("Start button pressed")
 		stellar.log("Starting music")
-		resources.AUDIO_ZOMBIE_HIT_SQUAD.play()
-		resources.AUDIO_ZOMBIE_HIT_SQUAD.set_volume(0.2)
+		# resources.AUDIO_ZOMBIE_HIT_SQUAD.play()
+		# resources.AUDIO_ZOMBIE_HIT_SQUAD.set_volume(0.2)
 		self.set_room("room_game")
 
 game = Game()

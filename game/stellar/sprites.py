@@ -1,5 +1,6 @@
 import pygame
 import hitboxes
+import tools
 
 class Sprite:
 	def __init__(self, xoffset=0, yoffset=0):
@@ -85,11 +86,8 @@ class Image(Sprite):
 		return new
 
 	# When it's permenant and you don't want performance to take a hit
-	def perma_scale(self, scale=None, width=None, height=None):
-		if scale:
-			size = map(lambda x: int(x*scale), self.size)
-		else:
-			size = (width, height)
+	def perma_scale(self, scale):
+		size = map(lambda x: int(x*scale), self.size)
 		self.surf = pygame.transform.scale(self.surf, size)
 		return self
 
@@ -135,14 +133,6 @@ class Compound(Sprite):
 	def draw(self, room, posn, scale=1):
 		for sprite in self.sprites:
 			sprite.draw(room, posn)
-
-def LoadSheet(image, *sections):
-	pygame.init()
-	sprites = []
-	for section in sections:
-		new = image.get_section(section)
-		sprites.append(new)
-	return sprites
 
 class Animation(Sprite):
 	def __init__(self, *sprites):
