@@ -6,14 +6,15 @@ import itertools
 import random
 
 class GridTile(stellar.objects.Object):
-	def __init__(self, x, y, tilesize=32):
+	def __init__(self, x, y, typ=0, tilesize=32):
 		stellar.objects.Object.__init__(self)
 
 		self.tilesize = tilesize
+		self.type = typ
 		self.grid_x = x
 		self.grid_y = y
 
-		sprite = resources.TILE_TL0_64
+		sprite = resources.TILE_REFERENCE[self.type]
 
 		self.add_sprite("default", sprite)
 		self.set_sprite("default")
@@ -47,8 +48,14 @@ class Room(stellar.rooms.Room):
 		self.cam_y = 0
 		self.move_speed = 10
 
-		for x, y in tools.itergrid(*self.grid_dims):
-			nt = GridTile(x, y, tilesize=self.tilesize)
+		# for x, y in tools.itergrid(*self.grid_dims):
+		# 	nt = GridTile(x, y, tilesize=self.tilesize)
+		# 	nt.disable()
+		# 	self.add_object(nt)
+		# 	self.grid[x, y] = nt
+
+		for x, y in resources.LEVEL_TEST:
+			nt = GridTile(x, y, typ=resources.LEVEL_TEST[x, y], tilesize=self.tilesize)
 			nt.disable()
 			self.add_object(nt)
 			self.grid[x, y] = nt

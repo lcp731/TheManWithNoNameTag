@@ -1,4 +1,5 @@
 import stellar
+import tools
 
 stellar.log("Loading resources")
 
@@ -9,6 +10,8 @@ AUDIO_ZOMBIE_HIT_SQUAD = stellar.sound.Music("resources/audio/Zombie_Hit_Squad.m
 AUDIO_GUNSHOT = stellar.sound.Effect("resources/audio/GUN-Shot.wav")
 AUDIO_HOVER_CLICK = stellar.sound.Effect("resources/audio/click.wav")
 AUDIO_PRESS_CLICK = stellar.sound.Effect("resources/audio/click4.wav")
+
+LEVEL_TEST = tools.parse_level("resources/levels/test.lvl")
 
 IMGS = stellar.tools.load_sheet(
 	stellar.sprites.Image("resources/images/spritesheet.png"),
