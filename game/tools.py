@@ -11,6 +11,7 @@ def parse_level(path):
 
 		for y, row in enumerate(reader):
 			for x, val in enumerate(row):
-				level[x, y] = int(val)
+				val = val.split()
+				level[x, y] = (int(val[0]), int(val[1]))
 
 	return level

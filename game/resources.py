@@ -3,6 +3,8 @@ import tools
 
 stellar.log("Loading resources")
 
+TILESIZE = 64
+
 FONT_ARIAL_WHITE_30 = stellar.tools.Font("resources/fonts/arial.ttf", 30, (255, 255, 255))
 FONT_WESTERN_WHITE_30 = stellar.tools.Font("resources/fonts/Pixel-Western.ttf", 30, (255, 255, 255))
 
@@ -11,7 +13,7 @@ AUDIO_GUNSHOT = stellar.sound.Effect("resources/audio/GUN-Shot.wav")
 AUDIO_HOVER_CLICK = stellar.sound.Effect("resources/audio/click.wav")
 AUDIO_PRESS_CLICK = stellar.sound.Effect("resources/audio/click4.wav")
 
-LEVEL_TEST = tools.parse_level("resources/levels/test.lvl")
+LEVEL_TEST = tools.parse_level("resources/levels/all.lvl")
 
 IMGS = stellar.tools.load_sheet(
 	stellar.sprites.Image("resources/images/spritesheet.png"),
@@ -27,125 +29,18 @@ IMGS = stellar.tools.load_sheet(
 	(576, 0, 64, 64)
 )
 
+_TILE_POINTS = []
+for x, y in tools.itergrid(12, 12):
+	_TILE_POINTS.append((x*32, y*32, 32, 32))
+
 _TILESET = stellar.tools.load_sheet(
 	stellar.sprites.Image("resources/images/tileset.png"),
-	(128, 160, 32, 32),
-	(160, 160, 32, 32),
-	(192, 160, 32, 32),
-	(224, 160, 32, 32),
-	(256, 160, 32, 32),
-	(288, 160, 32, 32),
-	(320, 160, 32, 32),
-	(352, 160, 32, 32),
-	(128, 192, 32, 32),
-	(160, 192, 32, 32),
-	(192, 192, 32, 32),
-	(224, 192, 32, 32),
-	(256, 192, 32, 32),
-	(288, 192, 32, 32),
-	(320, 192, 32, 32),
-	(352, 192, 32, 32),
-	(128, 224, 32, 32),
-	(160, 224, 32, 32),
-	(192, 224, 32, 32),
-	(224, 224, 32, 32),
-	(256, 224, 32, 32),
-	(288, 224, 32, 32),
-	(320, 224, 32, 32),
-	(352, 224, 32, 32),
-	(128, 256, 32, 32),
-	(160, 256, 32, 32),
-	(192, 256, 32, 32),
-	(224, 256, 32, 32),
-	(256, 256, 32, 32),
-	(288, 256, 32, 32),
-	(320, 256, 32, 32),
-	(352, 256, 32, 32),
-	(128, 0, 32, 32),
-	(160, 0, 32, 32),
-	(192, 0, 32, 32),
-	(224, 0, 32, 32)
+	*_TILE_POINTS
 )
 
-stellar.tools.transform_sprites(_TILESET, 2.0)
+stellar.tools.transform_sprites(_TILESET, TILESIZE/32.0)
 
-TILE_VOID = stellar.sprites.Sprite()
-
-TILE_SHELF_TL0_64 = _TILESET[0]
-TILE_SHELF_TL1_64 = _TILESET[2]
-TILE_SHELF_TL2_64 = _TILESET[4]
-TILE_SHELF_TL3_64 = _TILESET[6]
-TILE_SHELF_TL4_64 = _TILESET[16]
-TILE_SHELF_TL5_64 = _TILESET[18]
-TILE_SHELF_TL6_64 = _TILESET[20]
-TILE_SHELF_TL7_64 = _TILESET[22]
-
-TILE_SHELF_TR0_64 = _TILESET[1]
-TILE_SHELF_TR1_64 = _TILESET[3]
-TILE_SHELF_TR2_64 = _TILESET[5]
-TILE_SHELF_TR3_64 = _TILESET[7]
-TILE_SHELF_TR4_64 = _TILESET[17]
-TILE_SHELF_TR5_64 = _TILESET[19]
-TILE_SHELF_TR6_64 = _TILESET[21]
-TILE_SHELF_TR7_64 = _TILESET[23]
-
-TILE_SHELF_BL0_64 = _TILESET[8]
-TILE_SHELF_BL1_64 = _TILESET[10]
-TILE_SHELF_BL2_64 = _TILESET[12]
-TILE_SHELF_BL3_64 = _TILESET[14]
-TILE_SHELF_BL4_64 = _TILESET[24]
-TILE_SHELF_BL5_64 = _TILESET[26]
-TILE_SHELF_BL6_64 = _TILESET[28]
-TILE_SHELF_BL7_64 = _TILESET[30]
-
-TILE_SHELF_BR0_64 = _TILESET[9]
-TILE_SHELF_BR1_64 = _TILESET[11]
-TILE_SHELF_BR2_64 = _TILESET[13]
-TILE_SHELF_BR3_64 = _TILESET[15]
-TILE_SHELF_BR4_64 = _TILESET[25]
-TILE_SHELF_BR5_64 = _TILESET[27]
-TILE_SHELF_BR6_64 = _TILESET[29]
-TILE_SHELF_BR7_64 = _TILESET[31]
-
-TILE_GROUND0_64 = _TILESET[32]
-TILE_GROUND1_64 = _TILESET[33]
-TILE_GROUND2_64 = _TILESET[34]
-
-TILE_REFERENCE = {
-	0:	TILE_VOID,
-	1:	TILE_GROUND0_64,
-	2:	TILE_GROUND1_64,
-	3:	TILE_GROUND2_64,
-	4:	TILE_SHELF_TL0_64,
-	5:	TILE_SHELF_TL1_64,
-	6:	TILE_SHELF_TL2_64,
-	7:	TILE_SHELF_TL3_64,
-	8:	TILE_SHELF_TL4_64,
-	9:	TILE_SHELF_TL5_64,
-	10:	TILE_SHELF_TL6_64,
-	11:	TILE_SHELF_TL7_64,
-	12:	TILE_SHELF_TR0_64,
-	13:	TILE_SHELF_TR1_64,
-	14:	TILE_SHELF_TR2_64,
-	15:	TILE_SHELF_TR3_64,
-	16:	TILE_SHELF_TR4_64,
-	17:	TILE_SHELF_TR5_64,
-	18:	TILE_SHELF_TR6_64,
-	19:	TILE_SHELF_TR7_64,
-	20:	TILE_SHELF_BL0_64,
-	21:	TILE_SHELF_BL1_64,
-	22:	TILE_SHELF_BL2_64,
-	23:	TILE_SHELF_BL3_64,
-	24:	TILE_SHELF_BL4_64,
-	25:	TILE_SHELF_BL5_64,
-	26:	TILE_SHELF_BL6_64,
-	27:	TILE_SHELF_BL7_64,
-	28:	TILE_SHELF_BR0_64,
-	29:	TILE_SHELF_BR1_64,
-	30:	TILE_SHELF_BR2_64,
-	31:	TILE_SHELF_BR3_64,
-	32:	TILE_SHELF_BR4_64,
-	33:	TILE_SHELF_BR5_64,
-	34:	TILE_SHELF_BR6_64,
-	35:	TILE_SHELF_BR7_64
-}
+TILE_REFERENCE = {}
+for posn, tile in zip(tools.itergrid(12, 12), _TILESET):
+	TILE_REFERENCE[posn] = tile_TILESET = stellar.tools.load_sheet(
+	stellar.sprites.Image("resources/images/tileset.png"),

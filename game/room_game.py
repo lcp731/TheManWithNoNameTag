@@ -42,7 +42,7 @@ class Room(stellar.rooms.Room):
 		self.grid_dims = (100, 100)
 		self.grid = {}
 
-		self.tilesize = 64
+		self.tilesize = resources.TILESIZE
 
 		self.cam_x = 0
 		self.cam_y = 0
