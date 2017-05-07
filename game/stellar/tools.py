@@ -1,7 +1,6 @@
 import pygame
 import math
 import random
-import inspect
 
 pygame.init()
 
@@ -46,24 +45,15 @@ def random_rgb():
 	g = random.randint(0, 255)
 	b = random.randint(0, 255)
 	return r, g, b
+	
+def returnSlopeOfLineBetween(pointA, pointB):
+	return (pointB[1]-pointA[1])/(pointB[0]-pointA[0])
 
-def scale_image(image, **kwargs):
-	image.perma_scale(**kwargs)
-	return image
+def returnYIntercept(point, slope):
+        return (point[1] - (slope*point[0]))
 
-def log(*msgs):
-	msgs = map(str, msgs)
-	frame, filename, line_number, function_name, lines, index = inspect.getouterframes(inspect.currentframe())[1]
-	string = "[STELLAR] %s, %s - %s" % (function_name, filename, ", ".join(msgs))
-	print string
+def getYCordWithData(xcord, slope, yIntercept):
+        return (xcord * slope) + yIntercept
 
-def load_sheet(image, *sections):
-	sprites = []
-	for section in sections:
-		new = image.get_section(section)
-		sprites.append(new)
-	return sprites
-
-def transform_sprites(array, scale):
-	for spr in array:
-		spr.perma_scale(scale)
+def getXCordWithData(ycord, slope, yIntercept):
+        return (ycord - yIntercept)/slope
