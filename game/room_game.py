@@ -52,15 +52,47 @@ class Player(stellar.objects.Object):
 	def __init__(self):
 		stellar.objects.Object.__init__(self)
 
+		self.direction = 2
+		self.face_direction = 2
+		self.moving = False
+
 		spr_standing_forward = stellar.sprites.Animation(*resources.LEFTY_STAND_FORWARD)
 		spr_standing_backward = stellar.sprites.Animation(*resources.LEFTY_STAND_BACKWARD)
+		spr_running_fl = stellar.sprites.Animation(*resources.LEFTY_RUN_FL)
+		spr_running_fr = stellar.sprites.Animation(*resources.LEFTY_RUN_FR)
+		spr_running_bl = stellar.sprites.Animation(*resources.LEFTY_RUN_BL)
+		spr_running_br = stellar.sprites.Animation(*resources.LEFTY_RUN_BR)
 
-		spr_standing_forward.set_rate(20)
-		spr_standing_backward.set_rate(20)
+		spr_standing_forward.set_rate(30)
+		spr_standing_backward.set_rate(30)
+		spr_running_bl.set_rate(5)
+		spr_running_br.set_rate(5)
+		spr_running_fl.set_rate(5)
+		spr_running_fr.set_rate(5)
 
 		self.add_sprite("standing_forward", spr_standing_forward)
 		self.add_sprite("standing_backward", spr_standing_backward)
-		self.set_sprite("standing_forward")
+		self.add_sprite("running_fl", spr_running_fl)
+		self.add_sprite("running_fr", spr_running_fr)
+		self.add_sprite("running_bl", spr_running_bl)
+		self.add_sprite("running_br", spr_running_br)
+		self.set_sprite("running_fl")
+
+	def logic(self):
+		if self.moving:
+			if self.face_direction == 0:
+				self.set_sprite("running_bl")
+			if self.face_direction == 1:
+				self.set_sprite("running_br")
+			if self.face_direction == 2:
+				self.set_sprite("running_fr")
+			if self.face_direction == 3:
+				self.set_sprite("running_fl")
+		else:
+			if self.face_direction in [0, 1]:
+				self.set_sprite("standing_backward")
+			if self.face_direction in [2, 3]:
+				self.set_sprite("standing_forward")
 
 class Room(stellar.rooms.Room):
 	def __init__(self):
@@ -126,20 +158,43 @@ class Room(stellar.rooms.Room):
 		self.draw()
 
 	def control(self, buttons, mousepos):
+		mouseX, mouseY = mousepos
 		deltaX = 0
 		deltaY = 0
+		moving = False
 
-		if buttons[stellar.keys.S_HELD][stellar.keys.K_UP]:
+		if buttons[stellar.keys.S_HELD][resources.CONTROL_UP]:
 			deltaY -= self.move_speed
-		if buttons[stellar.keys.S_HELD][stellar.keys.K_DOWN]:
+			moving = True
+		if buttons[stellar.keys.S_HELD][resources.CONTROL_DOWN]:
 			deltaY += self.move_speed
-		if buttons[stellar.keys.S_HELD][stellar.keys.K_LEFT]:
+			moving = True
+		if buttons[stellar.keys.S_HELD][resources.CONTROL_LEFT]:
 			deltaX -= self.move_speed
-		if buttons[stellar.keys.S_HELD][stellar.keys.K_RIGHT]:
+			moving = True
+		if buttons[stellar.keys.S_HELD][resources.CONTROL_RIGHT]:
 			deltaX += self.move_speed
+			moving = True
 
-		if buttons[stellar.keys.S_PUSHED][stellar.keys.K_SPACE]:
-			resources.AUDIO_GUNSHOT.play()
+		# if deltaY < 0:
+		# 	if deltaX < 0:
+		# 		self.player.direction = 0
+
+		stellar.log(self.player.direction)
+
+		midX, midY = self.center()
+		if mouseY < midY:
+			if mouseX < midX:
+				self.player.face_direction = 0
+			else:
+				self.player.face_direction = 1
+		else:
+			if mouseX < midX:
+				self.player.face_direction = 3
+			else:
+				self.player.face_direction = 2
+
+		self.player.moving = moving
 
 		self.cam_x += deltaX
 		self.cam_y += deltaY

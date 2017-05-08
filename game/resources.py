@@ -5,6 +5,11 @@ stellar.log("Loading resources")
 
 TILESIZE = 64
 
+CONTROL_UP = stellar.keys.K_w
+CONTROL_DOWN = stellar.keys.K_s
+CONTROL_LEFT = stellar.keys.K_a
+CONTROL_RIGHT = stellar.keys.K_d
+
 FONT_ARIAL_WHITE_30 = stellar.tools.Font("resources/fonts/arial.ttf", 30, (255, 255, 255))
 FONT_WESTERN_WHITE_30 = stellar.tools.Font("resources/fonts/Pixel-Western.ttf", 30, (255, 255, 255))
 
@@ -55,4 +60,9 @@ for posn, tile in zip(tools.itergrid(12, 12), _TILESET):
 	TILE_REFERENCE[posn] = tile
 
 LEFTY_STAND_FORWARD = [_LEFTY[8], _LEFTY[17]]
-LEFTY_STAND_BACKWARD = [_LEFTY[26], _LEFTY[34]]
+LEFTY_STAND_BACKWARD = [_LEFTY[26], _LEFTY[35]]
+
+LEFTY_RUN_FL = _LEFTY[0:8]
+LEFTY_RUN_FR = _LEFTY[9:17]
+LEFTY_RUN_BL = _LEFTY[18:26]
+LEFTY_RUN_BR = _LEFTY[27:35]
