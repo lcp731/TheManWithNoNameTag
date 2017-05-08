@@ -48,26 +48,25 @@ class GameObject(stellar.objects.Object):
 	def _draw(self):
 		pass
 
-class Enemy(GameObject):
-	def __init__(self):
-		GameObject.__init__(self)
-
 class Player(stellar.objects.Object):
 	def __init__(self):
 		stellar.objects.Object.__init__(self)
-		animated = stellar.sprites.Animation(*resources._LEFTY)
-		animated.xoffset = -32
-		animated.yoffset = -32
-		animated.set_rate(20)
-		self.add_sprite("default", animated)
-		self.set_sprite("default")
+
+		spr_standing_forward = stellar.sprites.Animation(*resources.LEFTY_STAND_FORWARD)
+		spr_standing_backward = stellar.sprites.Animation(*resources.LEFTY_STAND_BACKWARD)
+
+		spr_standing_forward.set_rate(20)
+		spr_standing_backward.set_rate(20)
+
+		self.add_sprite("standing_forward", spr_standing_forward)
+		self.add_sprite("standing_backward", spr_standing_backward)
+		self.set_sprite("standing_forward")
 
 class Room(stellar.rooms.Room):
 	def __init__(self):
 		stellar.rooms.Room.__init__(self)
 		self.game_objects = []
 
-		self.grid_dims = (100, 100)
 		self.grid = {}
 
 		self.tilesize = resources.TILESIZE
@@ -81,11 +80,6 @@ class Room(stellar.rooms.Room):
 			self.add_object(nt)
 			self.grid[x, y] = nt
 
-		self.gameobj = Enemy()
-		self.gameobj.move_to(500, 500)
-		self.gameobj.add_sprite("default", stellar.sprites.Box((255, 0, 0), 25, 25))
-		self.gameobj.set_sprite("default")
-		self.add_gameobject(self.gameobj)
 
 		self.player = Player()
 		self.add_object(self.player)
