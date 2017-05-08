@@ -29,15 +29,27 @@ IMGS = stellar.tools.load_sheet(
 	(576, 0, 64, 64)
 )
 
+
 _TILE_POINTS = []
 for x, y in tools.itergrid(12, 12):
 	_TILE_POINTS.append((x*32, y*32, 32, 32))
+
+_LEFTY_POINTS = []
+for x, y in tools.itergrid(9, 4):
+	_LEFTY_POINTS.append((x*42, y*56, 42, 56))
+
+
+_LEFTY = stellar.load_sheet(
+	stellar.sprites.Image("resources/images/lefty.png"),
+	*_LEFTY_POINTS
+)
 
 _TILESET = stellar.tools.load_sheet(
 	stellar.sprites.Image("resources/images/tileset.png"),
 	*_TILE_POINTS
 )
 
+stellar.tools.transform_sprites(_LEFTY, 1.0)
 stellar.tools.transform_sprites(_TILESET, TILESIZE/32.0)
 
 TILE_REFERENCE = {}
