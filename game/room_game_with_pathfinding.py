@@ -62,7 +62,7 @@ class Pather(stellar.objects.Object):
 		self.roomy = ycord
 
 	def logic(self):
-		
+		pass
 
 class Room(stellar.rooms.Room):
 	def __init__(self):
@@ -111,9 +111,6 @@ class Room(stellar.rooms.Room):
 				self.grid[x,y].neighbors.append((D_LEFT_DOWN,1.2))
 			if y < self.grid_dims[1] and x < self.grid_dims[1]:
 				self.grid[x,y].neighbors.append((D_RIGHT_DOWN,1.2))
-
-				
-				
 
 	def on_load(self):
 		self.player.move_to(*self.center())

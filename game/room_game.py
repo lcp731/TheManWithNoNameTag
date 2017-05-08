@@ -9,6 +9,8 @@ class GridTile(stellar.objects.Object):
 	def __init__(self, x, y, typ=0, tilesize=32):
 		stellar.objects.Object.__init__(self)
 
+		self.disable()
+
 		self.tilesize = tilesize
 		self.type = typ
 		self.grid_x = x
@@ -25,6 +27,31 @@ class GridTile(stellar.objects.Object):
 	def _draw(self):
 		pass
 
+class GameObject(stellar.objects.Object):
+	def __init__(self):
+		stellar.objects.Object.__init__(self)
+
+		self.game_x = 0
+		self.game_y = 0
+
+	def move_to(self, x, y):
+		self.game_x = x
+		self.game_y = y
+
+	def move_by(self, dx, dy):
+		self.game_x += dx
+		self.game_y += dy
+
+	def draw(self):
+		self.get_current_sprite().draw(self.room, self.get_position(), self.scale)
+
+	def _draw(self):
+		pass
+
+class Enemy(GameObject):
+	def __init__(self):
+		GameObject.__init__(self)
+
 class Player(stellar.objects.Object):
 	def __init__(self):
 		stellar.objects.Object.__init__(self)
@@ -38,6 +65,7 @@ class Player(stellar.objects.Object):
 class Room(stellar.rooms.Room):
 	def __init__(self):
 		stellar.rooms.Room.__init__(self)
+		self.game_objects = []
 
 		self.grid_dims = (100, 100)
 		self.grid = {}
@@ -48,22 +76,23 @@ class Room(stellar.rooms.Room):
 		self.cam_y = 0
 		self.move_speed = 10
 
-		# for x, y in tools.itergrid(*self.grid_dims):
-		# 	nt = GridTile(x, y, tilesize=self.tilesize)
-		# 	nt.disable()
-		# 	self.add_object(nt)
-		# 	self.grid[x, y] = nt
-
 		for x, y in resources.LEVEL_TEST:
 			nt = GridTile(x, y, typ=resources.LEVEL_TEST[x, y], tilesize=self.tilesize)
-			nt.disable()
 			self.add_object(nt)
 			self.grid[x, y] = nt
 
-		self.cambox_border = 192
+		self.gameobj = Enemy()
+		self.gameobj.move_to(500, 500)
+		self.gameobj.add_sprite("default", stellar.sprites.Box((255, 0, 0), 25, 25))
+		self.gameobj.set_sprite("default")
+		self.add_gameobject(self.gameobj)
 
 		self.player = Player()
 		self.add_object(self.player)
+
+	def add_gameobject(self, obj):
+		self.add_object(obj)
+		self.game_objects.append(obj)
 
 	def on_load(self):
 		self.player.move_to(*self.center())
@@ -88,6 +117,11 @@ class Room(stellar.rooms.Room):
 				obj.draw()
 			except KeyError:
 				pass
+
+		for obj in self.game_objects:
+			obj.x = obj.game_x - self.cam_x
+			obj.y = obj.game_y - self.cam_y
+			obj.draw()
 
 		for fixture, posn in self.fixtures:
 			fixture.draw(self, posn)
