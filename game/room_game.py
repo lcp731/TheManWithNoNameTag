@@ -28,7 +28,7 @@ class GridTile(stellar.objects.Object):
 class Player(stellar.objects.Object):
 	def __init__(self):
 		stellar.objects.Object.__init__(self)
-		animated = stellar.sprites.Animation(*resources.IMGS)
+		animated = stellar.sprites.Animation(*resources._LEFTY)
 		animated.xoffset = -32
 		animated.yoffset = -32
 		animated.set_rate(20)

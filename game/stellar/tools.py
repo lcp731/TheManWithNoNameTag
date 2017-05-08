@@ -1,6 +1,7 @@
 import pygame
 import math
 import random
+import inspect
 
 pygame.init()
 
@@ -50,10 +51,40 @@ def returnSlopeOfLineBetween(pointA, pointB):
 	return (pointB[1]-pointA[1])/(pointB[0]-pointA[0])
 
 def returnYIntercept(point, slope):
-        return (point[1] - (slope*point[0]))
+	return (point[1] - (slope*point[0]))
 
 def getYCordWithData(xcord, slope, yIntercept):
-        return (xcord * slope) + yIntercept
+	return (xcord * slope) + yIntercept
 
 def getXCordWithData(ycord, slope, yIntercept):
-        return (ycord - yIntercept)/slope
+	return (ycord - yIntercept)/slope
+
+def parse_level(path):
+	level = {}
+	with open(path, "rb") as file:
+		reader = csv.reader(file)
+
+		for y, row in enumerate(reader):
+			for x, val in enumerate(row):
+				val = val.split()
+				level[x, y] = (int(val[0]), int(val[1]))
+
+	return level
+
+def load_sheet(image, *sections):
+	sprites = []
+	for section in sections:
+		new = image.get_section(section)
+		new.inherit(image)
+		sprites.append(new)
+	return sprites
+
+def transform_sprites(array, scale):
+	for spr in array:
+		spr.perma_scale(scale)
+
+def log(*msgs):
+	msgs = map(str, msgs)
+	frame, filename, line_number, function_name, lines, index = inspect.getouterframes(inspect.currentframe())[1]
+	string = "[STELLAR] %s, %s - %s" % (function_name, filename, ", ".join(msgs))
+	print string

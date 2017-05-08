@@ -62,8 +62,9 @@ class Ellipse(Sprite):
 		room.draw_ellipse(self.color, list(posn) + [self.width*scale, self.height*scale])
 
 class Image(Sprite):
-	def __init__(self, path, dimensions=None, xoffset=0, yoffset=0):
+	def __init__(self, path, dimensions=None, transparent_bkg=False, xoffset=0, yoffset=0):
 		Sprite.__init__(self, xoffset=xoffset, yoffset=yoffset)
+		self.transparent_bkg = transparent_bkg
 
 		if isinstance(path, pygame.Surface):
 			self.path = None
@@ -72,12 +73,24 @@ class Image(Sprite):
 			self.path = path
 			self.surf = pygame.image.load(self.path)
 
+		if self.transparent_bkg:
+			color = self.surf.get_at((0, 0))
+			self.surf.set_colorkey(color)
+
 		if dimensions:
 			self.surf = pygame.transform.scale(self.surf, dimensions)
 
 		self.size = self.surf.get_rect().size
 
 		self.hitbox = hitboxes.Box(*self.size)
+
+	def inherit(self, img):
+		self.xoffset = img.xoffset
+		self.yoffset = img.yoffset
+		self.transparent_bkg = img.transparent_bkg
+		if self.transparent_bkg:
+			color = self.surf.get_at((0, 0))
+			self.surf.set_colorkey(color)
 
 	def get_section(self, section):
 		cropped = pygame.Surface(section[-2:])
@@ -98,6 +111,7 @@ class Image(Sprite):
 					self.surf.set_at([x, y], replace_color)
 
 	def draw(self, room, posn, scale=1):
+		self.surf = self.surf.convert_alpha()
 		posn = (posn[0]+self.xoffset, posn[1]+self.yoffset)
 		if scale != 1:
 			size = map(lambda x: int(x*scale), self.size)
