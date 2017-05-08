@@ -13,7 +13,7 @@ AUDIO_GUNSHOT = stellar.sound.Effect("resources/audio/GUN-Shot.wav")
 AUDIO_HOVER_CLICK = stellar.sound.Effect("resources/audio/click.wav")
 AUDIO_PRESS_CLICK = stellar.sound.Effect("resources/audio/click4.wav")
 
-LEVEL_TEST = tools.parse_level("resources/levels/all.lvl")
+LEVEL_TEST = tools.parse_level("resources/levels/beersy.lvl")
 
 IMGS = stellar.tools.load_sheet(
 	stellar.sprites.Image("resources/images/spritesheet.png"),
@@ -42,5 +42,4 @@ stellar.tools.transform_sprites(_TILESET, TILESIZE/32.0)
 
 TILE_REFERENCE = {}
 for posn, tile in zip(tools.itergrid(12, 12), _TILESET):
-	TILE_REFERENCE[posn] = tile_TILESET = stellar.tools.load_sheet(
-	stellar.sprites.Image("resources/images/tileset.png"),
+	TILE_REFERENCE[posn] = tile
