@@ -39,11 +39,11 @@ for x, y in tools.itergrid(12, 12):
 	_TILE_POINTS.append((x*32, y*32, 32, 32))
 
 _LEFTY_POINTS = []
-for y, x in tools.itergrid(4, 9):
+for y, x in tools.itergrid(8, 9):
 	_LEFTY_POINTS.append((x*42, y*56, 42, 56))
 
 _LEFTY = stellar.tools.load_sheet(
-	stellar.sprites.Image("resources/images/lefty.png", transparent_bkg=True),
+	stellar.sprites.Image("resources/images/newlefty.png", transparent_bkg=True),
 	*_LEFTY_POINTS
 )
 
@@ -59,10 +59,17 @@ TILE_REFERENCE = {}
 for posn, tile in zip(tools.itergrid(12, 12), _TILESET):
 	TILE_REFERENCE[posn] = tile
 
-LEFTY_STAND_FORWARD = [_LEFTY[8], _LEFTY[17]]
-LEFTY_STAND_BACKWARD = [_LEFTY[26], _LEFTY[35]]
+LEFTY_STAND_FORWARD_L = [_LEFTY[8], _LEFTY[17]]
+LEFTY_STAND_BACKWARD_L = [_LEFTY[26], _LEFTY[35]]
+
+LEFTY_STAND_FORWARD_R = [tools.clone(_LEFTY[8]).flip(True, False), tools.clone(_LEFTY[17]).flip(True, False)]
+LEFTY_STAND_BACKWARD_R = [tools.clone(_LEFTY[26]).flip(True, False), tools.clone(_LEFTY[35]).flip(True, False)]
 
 LEFTY_RUN_FL = _LEFTY[0:8]
 LEFTY_RUN_FR = _LEFTY[9:17]
 LEFTY_RUN_BL = _LEFTY[18:26]
 LEFTY_RUN_BR = _LEFTY[27:35]
+LEFTY_BACK_FL = _LEFTY[36:44]
+LEFTY_BACK_FR = _LEFTY[45:53]
+LEFTY_BACK_BL = _LEFTY[54:62]
+LEFTY_BACK_BR = _LEFTY[63:71]

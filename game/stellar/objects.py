@@ -7,6 +7,9 @@ class Object:
 		self.scale = scale
 		self.room = None
 
+		self.xoffset = None
+		self.yoffset = None
+
 		self.layer = 0
 
 		self.enabled = True
@@ -24,6 +27,10 @@ class Object:
 		self.room = room
 
 	def add_sprite(self, name, sprite):
+		if self.xoffset:
+			sprite.xoffset = self.xoffset
+		if self.yoffset:
+			sprite.yoffset = self.yoffset
 		self.sprites[name] = sprite
 
 	def set_sprite(self, name):

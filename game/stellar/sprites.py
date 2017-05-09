@@ -84,6 +84,10 @@ class Image(Sprite):
 
 		self.hitbox = hitboxes.Box(*self.size)
 
+	def flip(self, xbool, ybool):
+		self.surf = pygame.transform.flip(self.surf, xbool, ybool)
+		return self
+
 	def inherit(self, img):
 		self.xoffset = img.xoffset
 		self.yoffset = img.yoffset

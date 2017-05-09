@@ -1,5 +1,6 @@
 import itertools
 import csv
+import copy
 
 def itergrid(x, y):
 	return itertools.product(xrange(x), xrange(y))
@@ -15,3 +16,6 @@ def parse_level(path):
 				level[x, y] = (int(val[0]), int(val[1]))
 
 	return level
+
+def clone(obj):
+	return copy.copy(obj)
