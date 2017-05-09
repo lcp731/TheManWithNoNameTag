@@ -106,52 +106,60 @@ class Player(stellar.objects.Object):
 	def logic(self):
 		# One hell of an if statement
 		# PS: it's for sprite selection just ignore it
+		backwards = False
 		if self.moving:
 			if self.m_direction == 0:
 				if self.face_direction == 0:
-					if self.direction in [8, 1, 2]:
+					if self.direction in [7, 8, 1, 2]:
 						self.set_sprite("running_bl")
 					else:
 						self.set_sprite("backward_bl")
+						backwards = True
 				if self.face_direction == 3:
-					if self.direction in [6, 7, 8]:
+					if self.direction in [6, 7, 8, 1]:
 						self.set_sprite("running_fl")
 					else:
 						self.set_sprite("backward_fl")
+						backwards = True
 			if self.m_direction == 1:
 				if self.face_direction == 0:
 					if self.direction in [8, 1, 2]:
 						self.set_sprite("running_bl")
 					else:
 						self.set_sprite("backward_bl")
+						backwards = True
 				if self.face_direction == 1:
 					if self.direction in [2, 3, 4]:
 						self.set_sprite("running_br")
 					else:
 						self.set_sprite("backward_br")
+						backwards = True
 			if self.m_direction == 2:
 				if self.face_direction == 1:
-					if self.direction in [2, 3, 4]:
+					if self.direction in [2, 3, 4, 5]:
 						self.set_sprite("running_br")
 					else:
 						self.set_sprite("backward_br")
+						backwards = True
 				if self.face_direction == 2:
-					if self.direction in [4, 5, 6]:
+					if self.direction in [3, 4, 5, 6]:
 						self.set_sprite("running_fr")
 					else:
 						self.set_sprite("backward_fr")
+						backwards = True
 			if self.m_direction == 3:
 				if self.face_direction == 2:
 					if self.direction in [4, 5, 6]:
 						self.set_sprite("running_fr")
 					else:
 						self.set_sprite("backward_fr")
+						backwards = True
 				if self.face_direction == 3:
 					if self.direction in [6, 7, 8]:
 						self.set_sprite("running_fl")
 					else:
 						self.set_sprite("backward_fl")
-
+						backwards = True
 		else:
 			if self.face_direction == 0:
 				self.set_sprite("standing_backward_l")
@@ -161,6 +169,10 @@ class Player(stellar.objects.Object):
 				self.set_sprite("standing_forward_r")
 			if self.face_direction == 3:
 				self.set_sprite("standing_forward_l")
+
+		self.backwards = backwards
+
+		stellar.log(self.backwards)
 
 class Room(stellar.rooms.Room):
 	def __init__(self):
@@ -174,7 +186,11 @@ class Room(stellar.rooms.Room):
 
 		self.cam_x = 0
 		self.cam_y = 0
-		self.move_speed = 8
+
+		self.max_speed = 9
+		self.slowed_speed = 7
+
+		self.move_speed = self.max_speed
 
 		for x, y in resources.LEVEL_TEST:
 			nt = GridTile(x, y, typ=resources.LEVEL_TEST[x, y], tilesize=self.tilesize)
@@ -286,6 +302,11 @@ class Room(stellar.rooms.Room):
 
 		pos = self.line_pos(mouseX) > mouseY
 		neg = self.line_neg(mouseX) > mouseY
+
+		if self.player.backwards:
+			self.move_speed = self.slowed_speed
+		else:
+			self.move_speed = self.max_speed
 
 		if (pos) and (not neg):
 			self.player.m_direction = 0

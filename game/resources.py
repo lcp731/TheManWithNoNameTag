@@ -34,6 +34,14 @@ IMGS = stellar.tools.load_sheet(
 	(576, 0, 64, 64)
 )
 
+_LEFTY_STAND = stellar.tools.load_sheet(
+	stellar.sprites.Image("resources/images/leftystand.png", transparent_bkg=True),
+	(0, 0, 42, 56),
+	(42, 0, 42, 56),
+	(84, 0, 42, 56),
+	(126, 0, 42, 56)
+)
+
 _TILE_POINTS = []
 for x, y in tools.itergrid(12, 12):
 	_TILE_POINTS.append((x*32, y*32, 32, 32))
@@ -53,17 +61,24 @@ _TILESET = stellar.tools.load_sheet(
 )
 
 stellar.tools.transform_sprites(_LEFTY, 2.0)
+stellar.tools.transform_sprites(_LEFTY_STAND, 2.0)
 stellar.tools.transform_sprites(_TILESET, TILESIZE/32.0)
 
 TILE_REFERENCE = {}
 for posn, tile in zip(tools.itergrid(12, 12), _TILESET):
 	TILE_REFERENCE[posn] = tile
 
-LEFTY_STAND_FORWARD_L = [_LEFTY[8], _LEFTY[17]]
-LEFTY_STAND_BACKWARD_L = [_LEFTY[26], _LEFTY[35]]
+LEFTY_STAND_FORWARD_NOGUN_L = [_LEFTY[8], _LEFTY[17]]
+LEFTY_STAND_BACKWARD_NOGUN_L = [_LEFTY[26], _LEFTY[35]]
 
-LEFTY_STAND_FORWARD_R = [tools.clone(_LEFTY[8]).flip(True, False), tools.clone(_LEFTY[17]).flip(True, False)]
-LEFTY_STAND_BACKWARD_R = [tools.clone(_LEFTY[26]).flip(True, False), tools.clone(_LEFTY[35]).flip(True, False)]
+LEFTY_STAND_FORWARD_NOGUN_R = [tools.clone(_LEFTY[8]).flip(True, False), tools.clone(_LEFTY[17]).flip(True, False)]
+LEFTY_STAND_BACKWARD_NOGUN_R = [tools.clone(_LEFTY[26]).flip(True, False), tools.clone(_LEFTY[35]).flip(True, False)]
+
+LEFTY_STAND_FORWARD_L = [_LEFTY_STAND[0]]
+LEFTY_STAND_FORWARD_R = [_LEFTY_STAND[1]]
+
+LEFTY_STAND_BACKWARD_L = [_LEFTY_STAND[2]]
+LEFTY_STAND_BACKWARD_R = [_LEFTY_STAND[3]]
 
 LEFTY_RUN_FL = _LEFTY[0:8]
 LEFTY_RUN_FR = _LEFTY[9:17]

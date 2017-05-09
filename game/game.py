@@ -8,7 +8,7 @@ class Game(stellar.base.Base):
 	def __init__(self):
 		stellar.base.Base.__init__(self)
 		self.title = "The Man With No Nametag"
-		self.size = (1000, 700)
+		self.size = (1300, 800)
 
 		self.add_room("room_menu", room_menu.Room())
 		self.add_room("room_game", room_game.Room())
