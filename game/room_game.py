@@ -4,6 +4,7 @@ import tools
 import math
 import itertools
 import random
+import numpy
 
 class GridTile(stellar.objects.Object):
 	def __init__(self, x, y, typ=0, tilesize=32):
@@ -49,8 +50,10 @@ class GameObject(stellar.objects.Object):
 		pass
 
 class Player(stellar.objects.Object):
-	def __init__(self):
+	def __init__(self, arm):
 		stellar.objects.Object.__init__(self)
+
+		self.arm = arm
 
 		self.xoffset = -42
 		self.yoffset = -56
@@ -103,7 +106,37 @@ class Player(stellar.objects.Object):
 		self.add_sprite("backward_br", spr_backward_br)
 		self.set_sprite("running_fl")
 
+		self.count = 0
+
+	def move_to(self, x, y):
+		self.x = x
+		self.y = y
+		self.arm.move_to(x, y)
+
+	def move_by(self, x, y):
+		self.x += x
+		self.y += y
+		self.arm.move_by(x, y)
+
 	def logic(self):
+
+
+		if not self.moving:
+			if self.m_direction == 0:
+				self.arm.set_sprite("left")
+				if self.face_direction == 1:
+					pass
+				else:
+					x, y = self.get_position()
+					self.arm.move_to(x-47, y-75)
+
+		if self.m_direction == 1:
+			pass
+		if self.m_direction == 2:
+			self.arm.set_sprite("right")
+		if self.m_direction == 3:
+			pass
+
 		# One hell of an if statement
 		# PS: it's for sprite selection just ignore it
 		backwards = False
@@ -120,7 +153,7 @@ class Player(stellar.objects.Object):
 						self.set_sprite("running_fl")
 					else:
 						self.set_sprite("backward_fl")
-						backwards = True
+						backwards = True 
 			if self.m_direction == 1:
 				if self.face_direction == 0:
 					if self.direction in [8, 1, 2]:
@@ -149,12 +182,14 @@ class Player(stellar.objects.Object):
 						backwards = True
 			if self.m_direction == 3:
 				if self.face_direction == 2:
+					self.set_sprite("downright")
 					if self.direction in [4, 5, 6]:
 						self.set_sprite("running_fr")
 					else:
 						self.set_sprite("backward_fr")
 						backwards = True
 				if self.face_direction == 3:
+					self.set_sprite("downleft")
 					if self.direction in [6, 7, 8]:
 						self.set_sprite("running_fl")
 					else:
@@ -172,7 +207,46 @@ class Player(stellar.objects.Object):
 
 		self.backwards = backwards
 
-		stellar.log(self.backwards)
+class PlayerArm(stellar.objects.Object):
+	def __init__(self):
+		stellar.objects.Object.__init__(self)
+
+		# self.add_sprite("down", resources.LEFTY_ARM_DOWN)
+		# self.add_sprite("downleft", resources.LEFTY_ARM_DOWNLEFT)
+		# self.add_sprite("downright", resources.LEFTY_ARM_DOWNRIGHT)
+		self.add_sprite("left", resources.LEFTY_ARM_LEFT)
+		self.add_sprite("right", resources.LEFTY_ARM_RIGHT)
+		# self.add_sprite("up", resources.LEFTY_ARM_UP)
+		# self.add_sprite("upleft", resources.LEFTY_ARM_UPLEFT)
+		# self.add_sprite("upright", resources.LEFTY_ARM_UPRIGHT)
+
+		self.set_sprite("left")
+
+	# def _draw(self):
+	# 	ogrect = self.get_current_sprite().orig_surf.get_rect()
+	# 	rect = self.get_current_sprite().surf.get_rect()
+	# 	x, y = self.get_position()
+	# 	x -= rect.width
+	# 	y -= rect.height
+
+	# 	self.get_current_sprite().draw(self.room, (x, y), self.scale)
+
+	def _draw(self):
+		pass
+
+	def control(self, buttons, pos):
+		mouseX, mouseY = pos
+		playerX, playerY = self.room.center()
+
+		angle = math.atan2(playerX-mouseX, playerY-mouseY)
+		angle = math.degrees(angle)
+
+		if self.current_sprite == "left":
+			angle = angle - 90
+		else:
+			angle = angle + 90
+		self.get_current_sprite().tilt(angle)
+		stellar.log(angle)
 
 class Room(stellar.rooms.Room):
 	def __init__(self):
@@ -198,8 +272,10 @@ class Room(stellar.rooms.Room):
 			self.grid[x, y] = nt
 
 
-		self.player = Player()
+		self.playerarm = PlayerArm()
+		self.player = Player(self.playerarm)
 		self.add_object(self.player)
+		self.add_object(self.playerarm)
 
 	def line_pos(self, x):
 		b = self.size[1]
@@ -321,4 +397,5 @@ class Room(stellar.rooms.Room):
 		self.cam_y += deltaY
 
 	def draw(self):
+		self.draw_text("%s, %s" % self.game.mousepos, (10, 10), resources.FONT_ARIAL_WHITE_12)
 		self.draw_rect((255, 255, 255), list(self.center()) + [3, 3])

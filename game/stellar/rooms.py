@@ -75,9 +75,8 @@ class Room:
 	def draw_blit(self, surf, posn):
 		self.game.screen.blit(surf, posn)
 
-
-
-
+	def draw_text(self, text, posn, font):
+		font.draw(self, text, posn)
 
 	def logic(self):
 		pass

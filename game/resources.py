@@ -11,6 +11,7 @@ CONTROL_LEFT = stellar.keys.K_a
 CONTROL_RIGHT = stellar.keys.K_d
 
 FONT_ARIAL_WHITE_30 = stellar.tools.Font("resources/fonts/arial.ttf", 30, (255, 255, 255))
+FONT_ARIAL_WHITE_12 = stellar.tools.Font("resources/fonts/arial.ttf", 12, (255, 255, 255))
 FONT_WESTERN_WHITE_30 = stellar.tools.Font("resources/fonts/Pixel-Western.ttf", 30, (255, 255, 255))
 
 AUDIO_ZOMBIE_HIT_SQUAD = stellar.sound.Music("resources/audio/Zombie_Hit_Squad.mp3")
@@ -67,6 +68,18 @@ stellar.tools.transform_sprites(_TILESET, TILESIZE/32.0)
 TILE_REFERENCE = {}
 for posn, tile in zip(tools.itergrid(12, 12), _TILESET):
 	TILE_REFERENCE[posn] = tile
+
+# LEFTY_ARM_DOWN = stellar.sprites.Image("resources/images/leftyarm/down.png").perma_scale(2.0)
+# LEFTY_ARM_DOWNLEFT = stellar.sprites.Image("resources/images/leftyarm/downleft.png").perma_scale(2.0)
+# LEFTY_ARM_DOWNRIGHT = stellar.sprites.Image("resources/images/leftyarm/downright.png").perma_scale(2.0)
+# LEFTY_ARM_LEFT = stellar.sprites.Image("resources/images/leftyarm/left.png").perma_scale(2.0)
+# LEFTY_ARM_RIGHT = stellar.sprites.Image("resources/images/leftyarm/right.png").perma_scale(2.0)
+# LEFTY_ARM_UP = stellar.sprites.Image("resources/images/leftyarm/up.png").perma_scale(2.0)
+# LEFTY_ARM_UPLEFT = stellar.sprites.Image("resources/images/leftyarm/upleft.png").perma_scale(2.0)
+# LEFTY_ARM_UPRIGHT = stellar.sprites.Image("resources/images/leftyarm/upright.png").perma_scale(2.0)
+LEFTY_ARM_LEFT = stellar.sprites.Image("resources/images/arm_left.png").perma_scale(1.7)
+LEFTY_ARM_RIGHT = stellar.sprites.Image("resources/images/arm_right.png").perma_scale(1.7)
+
 
 LEFTY_STAND_FORWARD_NOGUN_L = [_LEFTY[8], _LEFTY[17]]
 LEFTY_STAND_BACKWARD_NOGUN_L = [_LEFTY[26], _LEFTY[35]]

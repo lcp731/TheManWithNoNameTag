@@ -81,12 +81,25 @@ class Image(Sprite):
 			self.surf = pygame.transform.scale(self.surf, dimensions)
 
 		self.size = self.surf.get_rect().size
+		self.orig_surf = tools.clone(self.surf)
 
 		self.hitbox = hitboxes.Box(*self.size)
 
 	def flip(self, xbool, ybool):
 		self.surf = pygame.transform.flip(self.surf, xbool, ybool)
 		return self
+
+	def tilt(self, angle):
+		# self.surf = pygame.transform.rotate(self.orig_surf, angle)
+		# return self.surf
+		# loc = self.surf.get_rect().center  #rot_image is not defined 
+		# rot_sprite = pygame.transform.rotate(self.orig_surf, angle)
+		# rot_sprite.get_rect().center = loc
+		# self.surf = rot_sprite
+		# return self.surf
+
+		self.surf = tools.rot_center(self.orig_surf, angle)
+		return self.surf
 
 	def inherit(self, img):
 		self.xoffset = img.xoffset
@@ -106,6 +119,7 @@ class Image(Sprite):
 	def perma_scale(self, scale):
 		size = map(lambda x: int(x*scale), self.size)
 		self.surf = pygame.transform.scale(self.surf, size)
+		self.orig_surf = self.surf
 		return self
 
 	def replace_color(self, find_color, replace_color):

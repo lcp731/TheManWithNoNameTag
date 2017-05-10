@@ -2,8 +2,21 @@ import pygame
 import math
 import random
 import inspect
+import copy
 
 pygame.init()
+
+def rot_center(image, angle):
+	"""rotate an image while keeping its center and size"""
+	orig_rect = image.get_rect()
+	rot_image = pygame.transform.rotate(image, angle)
+	rot_rect = orig_rect.copy()
+	rot_rect.center = rot_image.get_rect().center
+	rot_image = rot_image.subsurface(rot_rect).copy()
+	return rot_image
+
+def clone(obj):
+	return copy.copy(obj)
 
 class Font(pygame.font.Font):
 	def __init__(self, path, size, color, background=None, antialias=True, underline=False, bold=False, italic=False):
@@ -22,7 +35,7 @@ class Font(pygame.font.Font):
 	def draw(self, game, text, posn):
 		# background=self.background
 		text = self.get_surf(text)
-		game.screen.blit(text, posn)
+		game.draw_blit(text, posn)
 
 class Cooldown:
 	def __init__(self, duration):

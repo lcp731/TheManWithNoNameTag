@@ -10,6 +10,8 @@ class Game(stellar.base.Base):
 		self.title = "The Man With No Nametag"
 		self.size = (1300, 800)
 
+		self.target_framerate = 60
+
 		self.add_room("room_menu", room_menu.Room())
 		self.add_room("room_game", room_game.Room())
 
