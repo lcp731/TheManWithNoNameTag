@@ -4,6 +4,7 @@ import tools
 stellar.log("Loading resources")
 
 TILESIZE = 64
+LEFTY_SCALE = 2.0
 
 CONTROL_UP = stellar.keys.K_w
 CONTROL_DOWN = stellar.keys.K_s
@@ -61,13 +62,20 @@ _TILESET = stellar.tools.load_sheet(
 	*_TILE_POINTS
 )
 
-stellar.tools.transform_sprites(_LEFTY, 2.0)
-stellar.tools.transform_sprites(_LEFTY_STAND, 2.0)
+stellar.tools.transform_sprites(_LEFTY, LEFTY_SCALE)
+stellar.tools.transform_sprites(_LEFTY_STAND, LEFTY_SCALE)
 stellar.tools.transform_sprites(_TILESET, TILESIZE/32.0)
 
 TILE_REFERENCE = {}
 for posn, tile in zip(tools.itergrid(12, 12), _TILESET):
 	TILE_REFERENCE[posn] = tile
+
+NON_SOLID_SPRITES = [
+	(4, 0),
+	(5, 0),
+	(6, 0),
+	(7, 0)
+]
 
 # LEFTY_ARM_DOWN = stellar.sprites.Image("resources/images/leftyarm/down.png").perma_scale(2.0)
 # LEFTY_ARM_DOWNLEFT = stellar.sprites.Image("resources/images/leftyarm/downleft.png").perma_scale(2.0)

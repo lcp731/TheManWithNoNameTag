@@ -176,6 +176,9 @@ class Animation(Sprite):
 		self.frame = 0
 		self.amimated = True
 
+	def current(self):
+		return self.sprites[self.frame]
+
 	def pause(self):
 		self.amimated = False
 

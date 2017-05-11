@@ -43,6 +43,9 @@ class Object:
 		psn = self.room.mouse_pos()
 		return self.get_current_sprite().hitbox.point_inside(self, psn)
 
+	def point_inside(self, point):
+		return self.get_current_sprite().hitbox.point_inside(self, point)
+
 	def get_position(self):
 		return (self.x, self.y)
 

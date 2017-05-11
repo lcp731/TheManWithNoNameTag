@@ -19,3 +19,6 @@ def parse_level(path):
 
 def clone(obj):
 	return copy.copy(obj)
+
+def blank(*args, **kwargs):
+	pass

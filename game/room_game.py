@@ -17,9 +17,12 @@ class GridTile(stellar.objects.Object):
 		self.grid_x = x
 		self.grid_y = y
 
+		self.solid = self.type not in resources.NON_SOLID_SPRITES
+
 		sprite = resources.TILE_REFERENCE[self.type]
 
 		self.add_sprite("default", sprite)
+		self.add_sprite("blank", resources.TILE_REFERENCE[0, 0])
 		self.set_sprite("default")
 
 	def draw(self):
@@ -59,6 +62,7 @@ class Player(stellar.objects.Object):
 		self.yoffset = -56
 
 		self.direction = 2
+		self.direction_persistant = 2
 		self.face_direction = 2
 		self.m_direction = 1
 		self.backwards = False
@@ -119,8 +123,6 @@ class Player(stellar.objects.Object):
 		self.arm.move_by(x, y)
 
 	def logic(self):
-
-
 		if not self.moving:
 			if self.m_direction == 0:
 				self.arm.set_sprite("left")
@@ -205,6 +207,9 @@ class Player(stellar.objects.Object):
 			if self.face_direction == 3:
 				self.set_sprite("standing_forward_l")
 
+		if self.direction:
+			self.direction_persistant = self.direction
+
 		self.backwards = backwards
 
 class PlayerArm(stellar.objects.Object):
@@ -246,7 +251,63 @@ class PlayerArm(stellar.objects.Object):
 		else:
 			angle = angle + 90
 		self.get_current_sprite().tilt(angle)
-		stellar.log(angle)
+
+class PlayerMovementHitbox(stellar.objects.Object):
+	def __init__(self, player):
+		stellar.objects.Object.__init__(self)
+		self.player = player
+		self.width, self.height = self.player.get_current_sprite().current().size
+		self.width *= resources.LEFTY_SCALE
+		self.width *= 0.85
+		self.height *= resources.LEFTY_SCALE
+		self.height /= 2.0
+		self.add_sprite("default", stellar.sprites.Box((255, 0, 0), self.width, self.height))
+		self.set_sprite("default")
+
+		self.get_current_sprite().draw = tools.blank
+
+	def check_valid(self, deltaX, deltaY):
+		cam_x = self.room.cam_x
+		cam_y = self.room.cam_y
+
+		newdeltaX = deltaX
+		newdeltaY = deltaY
+
+		nxt_tile_x_left = int( ( (cam_x + deltaX + (self.width/2)) / self.room.tilesize ) + ( self.room.size[0] / self.room.tilesize / 2 ) )
+		nxt_tile_x_right = int( ( (cam_x + deltaX - (self.width/2)) / self.room.tilesize ) + ( self.room.size[0] / self.room.tilesize / 2 ) )
+		nxt_tile_y_up = int( ( (cam_y + deltaY) / self.room.tilesize ) + ( self.room.size[1] / self.room.tilesize / 2 ) )
+		nxt_tile_y_down = int( ( (cam_y + deltaY + self.height) / self.room.tilesize ) + ( self.room.size[1] / self.room.tilesize / 2 ) )
+
+
+		cur_tile_x = int( ( (cam_x) / self.room.tilesize ) + ( self.room.size[0] / self.room.tilesize / 2 ) )
+		cur_tile_y = int( ( (cam_y) / self.room.tilesize ) + ( self.room.size[1] / self.room.tilesize / 2 ) )
+
+		x_left = self.room.grid[nxt_tile_x_left, cur_tile_y]
+		x_right = self.room.grid[nxt_tile_x_right, cur_tile_y]
+		y_up = self.room.grid[cur_tile_x, nxt_tile_y_up]
+		y_down = self.room.grid[cur_tile_x, nxt_tile_y_down]
+
+		x_range = xrange(int(self.x), int(self.x+self.width))
+		y_range = xrange(int(self.y), int(self.y+self.height))
+
+		if deltaY < 0:	# up
+			print "up"
+			if y_up.solid:
+				newdeltaY = 0
+		if deltaY > 0:	# down
+			print "down"
+			if y_down.solid:
+				newdeltaY = 0
+		if deltaX < 0:	# left
+			print "left"
+			if x_right.solid:
+				newdeltaX = 0
+		if deltaX > 0:	# right
+			print "right"
+			if x_left.solid:
+				newdeltaX = 0
+
+		return newdeltaX, newdeltaY
 
 class Room(stellar.rooms.Room):
 	def __init__(self):
@@ -255,7 +316,7 @@ class Room(stellar.rooms.Room):
 
 		self.grid = {}
 
-		self.tilesize = resources.TILESIZE
+		self.tilesize = float(resources.TILESIZE)
 
 
 		self.cam_x = 0
@@ -274,8 +335,10 @@ class Room(stellar.rooms.Room):
 
 		self.playerarm = PlayerArm()
 		self.player = Player(self.playerarm)
+		self.playerhb = PlayerMovementHitbox(self.player)
 		self.add_object(self.player)
 		self.add_object(self.playerarm)
+		self.add_object(self.playerhb)
 
 	def line_pos(self, x):
 		b = self.size[1]
@@ -289,7 +352,9 @@ class Room(stellar.rooms.Room):
 		self.game_objects.append(obj)
 
 	def on_load(self):
-		self.player.move_to(*self.center())
+		cntr = self.center()
+		self.player.move_to(*cntr)
+		self.playerhb.move_to(cntr[0]-(self.playerhb.width/2.0), cntr[1])
 		self.slope = self.size[1]/float(self.size[0])
 
 	# Manual draw function
@@ -297,10 +362,10 @@ class Room(stellar.rooms.Room):
 		self.game.screen.fill(self.background)
 
 		drawbuffer = 1
-		x_wid = int(math.ceil(self.size[0] / float(self.tilesize)))
-		y_wid = int(math.ceil(self.size[1] / float(self.tilesize)))
-		cam_gx = int(math.floor(self.cam_x / float(self.tilesize)))
-		cam_gy = int(math.floor(self.cam_y / float(self.tilesize)))
+		x_wid = int(math.ceil(self.size[0] / self.tilesize))
+		y_wid = int(math.ceil(self.size[1] / self.tilesize))
+		cam_gx = int(math.floor(self.cam_x / self.tilesize))
+		cam_gy = int(math.floor(self.cam_y / self.tilesize))
 		x_range = xrange(cam_gx-drawbuffer, cam_gx+x_wid+drawbuffer)
 		y_range = xrange(cam_gy-drawbuffer, cam_gy+y_wid+drawbuffer)
 
@@ -330,6 +395,7 @@ class Room(stellar.rooms.Room):
 		mouseX, mouseY = mousepos
 		deltaX = 0
 		deltaY = 0
+
 
 		if buttons[stellar.keys.S_HELD][resources.CONTROL_UP]:
 			deltaY -= self.move_speed
@@ -375,6 +441,8 @@ class Room(stellar.rooms.Room):
 				self.player.face_direction = 2
 
 		self.player.moving = bool(self.player.direction)
+
+		deltaX, deltaY = self.playerhb.check_valid(deltaX, deltaY)
 
 		pos = self.line_pos(mouseX) > mouseY
 		neg = self.line_neg(mouseX) > mouseY
