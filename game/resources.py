@@ -52,6 +52,10 @@ _LEFTY_POINTS = []
 for y, x in tools.itergrid(8, 9):
 	_LEFTY_POINTS.append((x*42, y*56, 42, 56))
 
+_SPLASH_POINTS = []
+for x, y in tools.itergrid(4, 4):
+	_SPLASH_POINTS.append((x*383, y*287, 383, 287))
+
 _LEFTY = stellar.tools.load_sheet(
 	stellar.sprites.Image("resources/images/newlefty.png", transparent_bkg=True),
 	*_LEFTY_POINTS
@@ -60,6 +64,11 @@ _LEFTY = stellar.tools.load_sheet(
 _TILESET = stellar.tools.load_sheet(
 	stellar.sprites.Image("resources/images/tileset.png"),
 	*_TILE_POINTS
+)
+
+SPLASH = stellar.tools.load_sheet(
+	stellar.sprites.Image("resources/images/splashscreen.png"),
+	*_SPLASH_POINTS
 )
 
 stellar.tools.transform_sprites(_LEFTY, LEFTY_SCALE)

@@ -210,4 +210,5 @@ class Room(stellar.rooms.Room):
 
 	def draw(self):
 		self.draw_text("%s, %s" % self.game.mousepos, (10, 10), resources.FONT_ARIAL_WHITE_12)
-		self.draw_rect((255, 255, 255), list(self.center()) + [3, 3])
+		# Debug 'crosshair'
+		# self.draw_rect((255, 255, 255), list(self.center()) + [3, 3])
