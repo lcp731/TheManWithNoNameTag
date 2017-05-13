@@ -5,7 +5,6 @@ stellar.log("Loading resources")
 
 TILESIZE = 64
 LEFTY_SCALE = 2.0
-ZOMBIE_SCALE = 2.0
 
 CONTROL_UP = stellar.keys.K_w
 CONTROL_DOWN = stellar.keys.K_s
@@ -57,16 +56,6 @@ _SPLASH_POINTS = []
 for x, y in tools.itergrid(4, 4):
 	_SPLASH_POINTS.append((x*383, y*287, 383, 287))
 
-_ZOMBIE_POINTS = []
-for y, x in tools.itergrid(7, 11):
-	_ZOMBIE_POINTS.append((x*75, y*55, 75, 55))
-
-
-_ZOMBIE = stellar.tools.load_sheet(
-	stellar.sprites.Image("resources/images/zombie.png", transparent_bkg=True),
-	*_ZOMBIE_POINTS
-)
-
 _LEFTY = stellar.tools.load_sheet(
 	stellar.sprites.Image("resources/images/newlefty.png", transparent_bkg=True),
 	*_LEFTY_POINTS
@@ -84,7 +73,6 @@ SPLASH = stellar.tools.load_sheet(
 
 stellar.tools.transform_sprites(_LEFTY, LEFTY_SCALE)
 stellar.tools.transform_sprites(_LEFTY_STAND, LEFTY_SCALE)
-stellar.tools.transform_sprites(_ZOMBIE, ZOMBIE_SCALE)
 stellar.tools.transform_sprites(_TILESET, TILESIZE/32.0)
 
 TILE_REFERENCE = {}
@@ -106,10 +94,6 @@ NON_SOLID_SPRITES = [
 # LEFTY_ARM_UP = stellar.sprites.Image("resources/images/leftyarm/up.png").perma_scale(2.0)
 # LEFTY_ARM_UPLEFT = stellar.sprites.Image("resources/images/leftyarm/upleft.png").perma_scale(2.0)
 # LEFTY_ARM_UPRIGHT = stellar.sprites.Image("resources/images/leftyarm/upright.png").perma_scale(2.0)
-
-ZOMBIE_RIGHT = _ZOMBIE[0:11]
-ZOMBIE_LEFT = map(lambda z: tools.clone(z).flip(True, False), ZOMBIE_RIGHT)
-
 LEFTY_ARM_LEFT = stellar.sprites.Image("resources/images/arm_left.png").perma_scale(1.7)
 LEFTY_ARM_RIGHT = stellar.sprites.Image("resources/images/arm_right.png").perma_scale(1.7)
 

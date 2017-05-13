@@ -170,13 +170,11 @@ class Animation(Sprite):
 	def __init__(self, *sprites):
 		Sprite.__init__(self)
 		self.sprites = sprites
-		self.events = {}
 		self.frames = len(self.sprites)
 		self.rate = 60
 		self.counter = 0
 		self.frame = 0
 		self.amimated = True
-		self.last_called = 0
 
 	def current(self):
 		return self.sprites[self.frame]
@@ -187,30 +185,11 @@ class Animation(Sprite):
 	def resume(self):
 		self.amimated = True
 
-	def add_event(self, frames, func, *args, **kwargs):
-		if type(frames) not in [list, tuple]:
-			frames = [frames]
-		dat = {
-			"func": func,
-			"args": args,
-			"kwargs": kwargs
-		}
-		for frame in frames:
-			self.events[frame] = dat
-
 	def set_rate(self, rate):
 		self.rate = rate
 
 	def draw(self, room, posn, scale=1):
 		self.frame = (self.counter / self.rate) % self.frames
-		if self.frame in self.events and self.last_called != self.frame:
-			dat = self.events[self.frame]
-			dat["func"](*dat["args"], **dat["kwargs"])
-			self.last_called = self.frame
-
-		if self.last_called != self.frame:
-			self.last_called = self.frame
-
 		self.sprites[self.frame].xoffset = self.xoffset
 		self.sprites[self.frame].yoffset = self.yoffset
 		self.sprites[self.frame].draw(room, posn, scale=scale)

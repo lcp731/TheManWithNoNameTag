@@ -53,40 +53,10 @@ class GameObject(stellar.objects.Object):
 	def _draw(self):
 		pass
 
-class Zombie(GameObject):
-	def __init__(self):
-		GameObject.__init__(self)
-		self.move_speed = 20
-
-		walk_left = stellar.sprites.Animation(*resources.ZOMBIE_LEFT)
-		walk_right = stellar.sprites.Animation(*resources.ZOMBIE_RIGHT)
-
-		walk_left.set_rate(5)
-		walk_right.set_rate(5)
-
-		walk_left.add_event([3, 5, 7], self.step_left)
-		walk_right.add_event([3, 5, 7], self.step_right)
-
-		self.add_sprite("walk_left", walk_left)
-		self.add_sprite("walk_right", walk_right)
-		self.set_sprite("walk_right")
-
-	def step_left(self):
-		# self.move_by(-self.move_speed, 0)
-		pass
-
-	def step_right(self):
-		# self.move_by(self.move_speed, 0)
-		pass
-
-	def logic(self):
-		self.move_by(1, 0)
-
 class Room(stellar.rooms.Room):
 	def __init__(self):
 		stellar.rooms.Room.__init__(self)
 		self.game_objects = []
-		self.zombies = []
 
 		self.grid = {}
 
@@ -113,14 +83,6 @@ class Room(stellar.rooms.Room):
 		self.add_object(self.player)
 		self.add_object(self.playerarm)
 		self.add_object(self.playerhb)
-
-		self.add_zombie(300, 300)
-
-	def add_zombie(self, *posn):
-		nz = Zombie()
-		nz.move_to(*posn)
-		self.zombies.append(nz)
-		self.add_gameobject(nz)
 
 	def line_pos(self, x):
 		b = self.size[1]
