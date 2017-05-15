@@ -1,5 +1,6 @@
 import stellar
 import tools
+import os
 
 stellar.log("Loading resources")
 
@@ -21,7 +22,16 @@ AUDIO_GUNSHOT = stellar.sound.Effect("resources/audio/GUN-Shot.wav")
 AUDIO_HOVER_CLICK = stellar.sound.Effect("resources/audio/click.wav")
 AUDIO_PRESS_CLICK = stellar.sound.Effect("resources/audio/click4.wav")
 
-LEVEL_TEST = tools.parse_level("resources/levels/beersy.lvl")
+LEVEL_TEST = tools.legacy_parse_level("resources/levels/beersy.lvl")
+LEVEL = tools.parse_level("resources/levels/newtest.lvl")
+
+TILE_FILENAMES = os.listdir("resources/images/tiles/")
+TILE_REFERENCE = {}
+for tile in TILE_FILENAMES:
+	img = stellar.sprites.Image("resources/images/tiles/%s" % tile)
+	stellar.tools.transform_sprites([img], TILESIZE/32.0)
+	ref = tools.base_type(tile.split(".")[0])
+	TILE_REFERENCE[ref] = img
 
 IMGS = stellar.tools.load_sheet(
 	stellar.sprites.Image("resources/images/spritesheet.png"),
@@ -45,9 +55,9 @@ _LEFTY_STAND = stellar.tools.load_sheet(
 	(126, 0, 42, 56)
 )
 
-_TILE_POINTS = []
-for x, y in tools.itergrid(12, 12):
-	_TILE_POINTS.append((x*32, y*32, 32, 32))
+# _TILE_POINTS = []
+# for x, y in tools.itergrid(12, 12):
+# 	_TILE_POINTS.append((x*32, y*32, 32, 32))
 
 _LEFTY_POINTS = []
 for y, x in tools.itergrid(8, 9):
@@ -72,10 +82,12 @@ _LEFTY = stellar.tools.load_sheet(
 	*_LEFTY_POINTS
 )
 
-_TILESET = stellar.tools.load_sheet(
-	stellar.sprites.Image("resources/images/tileset.png"),
-	*_TILE_POINTS
-)
+BULLET = stellar.sprites.Image("resources/images/bullet.png", transparent_bkg=True)
+
+# _TILESET = stellar.tools.load_sheet(
+# 	stellar.sprites.Image("resources/images/tileset.png"),
+# 	*_TILE_POINTS
+# )
 
 SPLASH = stellar.tools.load_sheet(
 	stellar.sprites.Image("resources/images/splashscreen.png"),
@@ -85,18 +97,14 @@ SPLASH = stellar.tools.load_sheet(
 stellar.tools.transform_sprites(_LEFTY, LEFTY_SCALE)
 stellar.tools.transform_sprites(_LEFTY_STAND, LEFTY_SCALE)
 stellar.tools.transform_sprites(_ZOMBIE, ZOMBIE_SCALE)
-stellar.tools.transform_sprites(_TILESET, TILESIZE/32.0)
+# stellar.tools.transform_sprites([BULLET], 2)
+# stellar.tools.transform_sprites(_TILESET, TILESIZE/32.0)
 
-TILE_REFERENCE = {}
-for posn, tile in zip(tools.itergrid(12, 12), _TILESET):
-	TILE_REFERENCE[posn] = tile
+# TILE_REFERENCE = {}
+# for posn, tile in zip(tools.itergrid(12, 12), _TILESET):
+# 	TILE_REFERENCE[posn] = tile
 
-NON_SOLID_SPRITES = [
-	(4, 0),
-	(5, 0),
-	(6, 0),
-	(7, 0)
-]
+NON_SOLID_SPRITES = [1, 2, 3, 4, 5, 14, 15, 16, 17, 18, 19, 20, 21, 22]
 
 # LEFTY_ARM_DOWN = stellar.sprites.Image("resources/images/leftyarm/down.png").perma_scale(2.0)
 # LEFTY_ARM_DOWNLEFT = stellar.sprites.Image("resources/images/leftyarm/downleft.png").perma_scale(2.0)
@@ -134,3 +142,26 @@ LEFTY_BACK_FL = _LEFTY[36:44]
 LEFTY_BACK_FR = _LEFTY[45:53]
 LEFTY_BACK_BL = _LEFTY[54:62]
 LEFTY_BACK_BR = _LEFTY[63:71]
+
+GUN_SHOTS = [
+	stellar.sound.Effect("resources/audio/gun/Shot1.wav"),
+	stellar.sound.Effect("resources/audio/gun/Shot2.wav"),
+	stellar.sound.Effect("resources/audio/gun/Shot3.wav"),
+	stellar.sound.Effect("resources/audio/gun/Shot4.wav"),
+	stellar.sound.Effect("resources/audio/gun/Shot5.wav"),
+	stellar.sound.Effect("resources/audio/gun/Shot6.wav")
+]
+
+LEFTY_FOOTSTEPS = [
+	stellar.sound.Effect("resources/audio/footsteps/Footsteps, Gravel 1.wav"),
+	stellar.sound.Effect("resources/audio/footsteps/Footsteps, Gravel 2.wav"),
+	stellar.sound.Effect("resources/audio/footsteps/Footsteps, Gravel 3.wav"),
+	stellar.sound.Effect("resources/audio/footsteps/Footsteps, Gravel 4.wav"),
+	stellar.sound.Effect("resources/audio/footsteps/Footsteps, Gravel 5.wav"),
+	stellar.sound.Effect("resources/audio/footsteps/Footsteps, Gravel 6.wav"),
+	stellar.sound.Effect("resources/audio/footsteps/Footsteps, Gravel 7.wav"),
+	stellar.sound.Effect("resources/audio/footsteps/Footsteps, Gravel 8.wav"),
+	stellar.sound.Effect("resources/audio/footsteps/Footsteps, Gravel 9.wav")
+]
+
+map(lambda x: x.set_volume(0.5), LEFTY_FOOTSTEPS)

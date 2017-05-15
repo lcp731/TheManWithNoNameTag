@@ -19,6 +19,9 @@ class Room:
 		obj.room_link(self)
 		self.all_objects.append(obj)
 
+	def remove_object(self, obj):
+		self.all_objects.remove(obj)
+
 	def add_fixture(self, fixture, posn):
 		self.fixtures.append([fixture, posn])
 

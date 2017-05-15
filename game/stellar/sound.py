@@ -22,6 +22,20 @@ class Effect(Sound):
 		Sound.__init__(self)
 		self.path = path
 		self.chunk = chunk
+		self.volume = 0
+
+	def set_volume(self, val):
+		self.volume = val
+
+	def rms(self, data):
+		count = len(data)/2
+		format = "%dh"%(count)
+		shorts = struct.unpack( format, data )
+		sum_squares = 0.0
+		for sample in shorts:
+			n = sample * (1.0/32768)
+			sum_squares += n*n
+		return math.sqrt( sum_squares / count )
 
 	def _play(self):
 		wav = wave.open(self.path, "rb")

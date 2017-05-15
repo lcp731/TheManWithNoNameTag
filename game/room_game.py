@@ -23,7 +23,7 @@ class GridTile(stellar.objects.Object):
 		sprite = resources.TILE_REFERENCE[self.type]
 
 		self.add_sprite("default", sprite)
-		self.add_sprite("blank", resources.TILE_REFERENCE[0, 0])
+		# self.add_sprite("blank", resources.TILE_REFERENCE[0, 0])
 		self.set_sprite("default")
 
 	def draw(self):
@@ -32,30 +32,72 @@ class GridTile(stellar.objects.Object):
 	def _draw(self):
 		pass
 
-class GameObject(stellar.objects.Object):
+class Bullet(tools.GameObject):
+	def __init__(self, sx, sy, target):
+		tools.GameObject.__init__(self)
+
+		stellar.log("Bullet shot from (%s, %s)" % (sx, sy))
+
+		self.start_x = sx
+		self.start_y = sy
+		self.target_x, self.target_y = target
+
+		self.speed = 30
+		self.lifespan = 1000
+		self.age = 0
+
+		self.move_to(self.start_x, self.start_y)
+
+		self.add_sprite("default", resources.BULLET)
+		self.set_sprite("default")
+
+		steps_number = max( abs(self.target_x-self.start_x), abs(self.target_y-self.start_y) )
+
+		self.ostepx = float(self.target_x-self.start_x)/steps_number
+		self.ostepy = float(self.target_y-self.start_y)/steps_number
+
+		self.step_x = self.ostepx * self.speed
+		self.step_y = self.ostepy * self.speed
+
+		# for i in range(steps_number+1):
+		# 	self.steps.append((int(self.start_x + stepx*i), int(self.start_y + stepy*i)))
+
+	def kill(self, reason="unspecified"):
+		stellar.log("Bullet killed, reason: %s" % reason)
+		self.disable()
+
+	def check_life(self):
+		if self.age > self.lifespan:
+			self.kill(reason="old age")
+			return
+
+		curtilex = int(self.game_x / self.room.tilesize)
+		curtiley = int(self.game_y / self.room.tilesize)
+
+		try:
+			if self.room.grid[curtilex, curtiley].solid:
+				self.kill(reason="hit wall")
+				return
+		except KeyError:
+			self.kill(reason="out of map")
+			return
+
+		for zomb in self.room.zombies:
+			if zomb.point_inside(self.get_position()):
+				self.kill(reason="hit enemy")
+				return
+
+	def logic(self):
+		for _i in xrange(self.speed):
+			self.move_by(self.ostepx, self.ostepy)
+			self.age += 1
+			self.check_life()
+			if not self.enabled:
+				break
+
+class Zombie(tools.GameObject):
 	def __init__(self):
-		stellar.objects.Object.__init__(self)
-
-		self.game_x = 0
-		self.game_y = 0
-
-	def move_to(self, x, y):
-		self.game_x = x
-		self.game_y = y
-
-	def move_by(self, dx, dy):
-		self.game_x += dx
-		self.game_y += dy
-
-	def draw(self):
-		self.get_current_sprite().draw(self.room, self.get_position(), self.scale)
-
-	def _draw(self):
-		pass
-
-class Zombie(GameObject):
-	def __init__(self):
-		GameObject.__init__(self)
+		tools.GameObject.__init__(self)
 		self.move_speed = 20
 
 		walk_left = stellar.sprites.Animation(*resources.ZOMBIE_LEFT)
@@ -87,11 +129,13 @@ class Room(stellar.rooms.Room):
 		stellar.rooms.Room.__init__(self)
 		self.game_objects = []
 		self.zombies = []
+		self.bullets = []
 
 		self.grid = {}
 
 		self.tilesize = float(resources.TILESIZE)
 
+		self.shoot_cooldown = stellar.tools.Cooldown(20)
 
 		self.cam_x = 0
 		self.cam_y = 0
@@ -101,8 +145,11 @@ class Room(stellar.rooms.Room):
 
 		self.move_speed = self.max_speed
 
-		for x, y in resources.LEVEL_TEST:
-			nt = GridTile(x, y, typ=resources.LEVEL_TEST[x, y], tilesize=self.tilesize)
+		for tile_pos in resources.LEVEL:
+			tile = resources.LEVEL[tile_pos]
+			x, y = tile.x, tile.y
+			typ = tile["tile"]
+			nt = GridTile(x, y, typ=typ, tilesize=self.tilesize)
 			self.add_object(nt)
 			self.grid[x, y] = nt
 
@@ -139,6 +186,9 @@ class Room(stellar.rooms.Room):
 		self.playerhb.move_to(cntr[0]-(self.playerhb.width/2.0), cntr[1])
 		self.slope = self.size[1]/float(self.size[0])
 
+	def logic(self):
+		self.shoot_cooldown.frame()
+
 	# Manual draw function
 	def _draw(self):
 		self.game.screen.fill(self.background)
@@ -161,9 +211,10 @@ class Room(stellar.rooms.Room):
 				pass
 
 		for obj in self.game_objects:
-			obj.x = obj.game_x - self.cam_x
-			obj.y = obj.game_y - self.cam_y
-			obj.draw()
+			if obj.enabled:
+				obj.x = obj.game_x - self.cam_x
+				obj.y = obj.game_y - self.cam_y
+				obj.draw()
 
 		for fixture, posn in self.fixtures:
 			fixture.draw(self, posn)
@@ -175,18 +226,36 @@ class Room(stellar.rooms.Room):
 
 	def control(self, buttons, mousepos):
 		mouseX, mouseY = mousepos
+		key_input = False
 		deltaX = 0
 		deltaY = 0
 
-
 		if buttons[stellar.keys.S_HELD][resources.CONTROL_UP]:
 			deltaY -= self.move_speed
+			key_input = True
 		if buttons[stellar.keys.S_HELD][resources.CONTROL_DOWN]:
 			deltaY += self.move_speed
+			key_input = True
 		if buttons[stellar.keys.S_HELD][resources.CONTROL_LEFT]:
 			deltaX -= self.move_speed
+			key_input = True
 		if buttons[stellar.keys.S_HELD][resources.CONTROL_RIGHT]:
 			deltaX += self.move_speed
+			key_input = True
+
+		if buttons[stellar.keys.S_PUSHED][stellar.keys.M_1] and self.shoot_cooldown.is_done():
+			self.shoot_cooldown.reset()
+			random.choice(resources.GUN_SHOTS).play()
+			x = self.cam_x + (self.size[0]/2)
+			y = self.cam_y + (self.size[1]/2)
+			targetX = mouseX + self.cam_x
+			targetY = mouseY + self.cam_y
+			bullet = Bullet(x, y, (targetX, targetY))
+			self.bullets.append(bullet)
+			self.add_gameobject(bullet)
+
+			deltaX -= bullet.ostepx
+			deltaY -= bullet.ostepy
 
 		if deltaY < 0:
 			if deltaX < 0:
@@ -222,7 +291,7 @@ class Room(stellar.rooms.Room):
 			else:
 				self.player.face_direction = 2
 
-		self.player.moving = bool(self.player.direction)
+		self.player.moving = bool(self.player.direction) and key_input
 
 		deltaX, deltaY = self.playerhb.check_valid(deltaX, deltaY)
 
@@ -247,6 +316,7 @@ class Room(stellar.rooms.Room):
 		self.cam_y += deltaY
 
 	def draw(self):
-		self.draw_text("%s, %s" % self.game.mousepos, (10, 10), resources.FONT_ARIAL_WHITE_12)
-		# Debug 'crosshair'
-		# self.draw_rect((255, 255, 255), list(self.center()) + [3, 3])
+		if self.game.debug:
+			self.draw_text("%s, %s" % self.game.mousepos, (10, 10), resources.FONT_ARIAL_WHITE_12)
+			self.draw_text("%sFPS" % self.game.clock.get_fps(), (10, 30), resources.FONT_ARIAL_WHITE_12)
+			self.draw_rect((255, 255, 255), list(self.center()) + [3, 3])

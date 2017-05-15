@@ -1,5 +1,6 @@
 import stellar
 import resources
+import random
 import tools
 import math
 
@@ -34,6 +35,15 @@ class Player(stellar.objects.Object):
 		spr_backward_bl = stellar.sprites.Animation(*resources.LEFTY_BACK_BL)
 		spr_backward_br = stellar.sprites.Animation(*resources.LEFTY_BACK_BR)
 
+		spr_running_bl.add_event([0, 3], self.play_footstep)
+		spr_running_br.add_event([0, 3], self.play_footstep)
+		spr_running_fl.add_event([0, 3], self.play_footstep)
+		spr_running_fr.add_event([0, 3], self.play_footstep)
+		spr_backward_fl.add_event([0, 3], self.play_footstep)
+		spr_backward_fr.add_event([0, 3], self.play_footstep)
+		spr_backward_bl.add_event([0, 3], self.play_footstep)
+		spr_backward_br.add_event([0, 3], self.play_footstep)
+
 		spr_standing_forward_l.set_rate(30)
 		spr_standing_backward_l.set_rate(30)
 		spr_standing_forward_r.set_rate(30)
@@ -62,6 +72,9 @@ class Player(stellar.objects.Object):
 		self.set_sprite("running_fl")
 
 		self.count = 0
+
+	def play_footstep(self):
+		random.choice(resources.LEFTY_FOOTSTEPS).play()
 
 	def move_to(self, x, y):
 		self.x = x
@@ -249,7 +262,7 @@ class PlayerMovementHitbox(stellar.objects.Object):
 				newdeltaY = 0
 		if deltaX < 0:	# left
 			if x_right.solid:	# YEAH I screwed up the directions
-				newdeltaX = 0		# honestly idk why but it works so dont touch it lmao
+				newdeltaX = 0		# honestly idk why, but it works so dont touch it lmao
 		if deltaX > 0:	# right
 			if x_left.solid:
 				newdeltaX = 0

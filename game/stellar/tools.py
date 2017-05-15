@@ -61,7 +61,7 @@ def random_rgb():
 	return r, g, b
 	
 def returnSlopeOfLineBetween(pointA, pointB):
-	return (pointB[1]-pointA[1])/(pointB[0]-pointA[0])
+	return float(pointB[1]-pointA[1])/(pointB[0]-pointA[0])
 
 def returnYIntercept(point, slope):
 	return (point[1] - (slope*point[0]))

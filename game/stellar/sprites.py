@@ -119,6 +119,8 @@ class Image(Sprite):
 	def perma_scale(self, scale):
 		size = map(lambda x: int(x*scale), self.size)
 		self.surf = pygame.transform.scale(self.surf, size)
+		self.size = self.surf.get_rect().size
+		self.hitbox = hitboxes.Box(*self.size)
 		self.orig_surf = self.surf
 		return self
 
@@ -170,6 +172,7 @@ class Animation(Sprite):
 	def __init__(self, *sprites):
 		Sprite.__init__(self)
 		self.sprites = sprites
+		self.hitboxe = hitboxes.Hitbox()
 		self.events = {}
 		self.frames = len(self.sprites)
 		self.rate = 60
@@ -215,4 +218,5 @@ class Animation(Sprite):
 		self.sprites[self.frame].yoffset = self.yoffset
 		self.sprites[self.frame].draw(room, posn, scale=scale)
 		self.size = self.sprites[self.frame].size
+		self.hitbox = self.current().hitbox
 		self.counter += 1
