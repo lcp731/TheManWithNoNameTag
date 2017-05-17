@@ -20,6 +20,7 @@ class GridTile(stellar.objects.Object):
 		self.grid_y = y
 
 		self.solid = self.type in resources.SOLID_SPRITES
+		self.bullet_solid = self.solid
 
 		sprite = resources.TILE_REFERENCE[self.type]
 
@@ -76,7 +77,7 @@ class Bullet(tools.GameObject):
 		curtiley = int(self.game_y / self.room.tilesize)
 
 		try:
-			if self.room.grid[curtilex, curtiley].solid:
+			if self.room.grid[curtilex, curtiley].bullet_solid:
 				self.kill(reason="hit wall")
 				return
 		except KeyError:
@@ -174,6 +175,15 @@ class Room(stellar.rooms.Room):
 			nt.room = self
 			self.grid[x, y] = nt
 
+		for tile_pos in self.grid:
+			tile = self.grid[tile_pos]
+			try:
+				lower_tile = self.grid[tile_pos[0], tile_pos[1]+1]
+				if not lower_tile.solid:
+					tile.bullet_solid = False
+			except KeyError:
+				pass
+
 
 		self.playerarm = player.PlayerArm()
 		self.player = player.Player(self.playerarm)
@@ -184,7 +194,7 @@ class Room(stellar.rooms.Room):
 
 		self.add_zombie(300, 300)
 
-		self.add_object(uiobjects.Revolver())
+		# self.add_object(uiobjects.Revolver())
 
 		self.menu_init()
 

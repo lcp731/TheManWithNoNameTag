@@ -35,10 +35,9 @@ class Object:
 
 	def set_sprite(self, name):
 		self.current_sprite = name
-		self.csprite = self.sprites[self.current_sprite]
 
 	def get_current_sprite(self):
-		return self.csprite
+		return self.sprites[self.current_sprite]
 
 	def mouse_over(self):
 		psn = self.room.mouse_pos()
