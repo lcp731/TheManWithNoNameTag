@@ -5,6 +5,7 @@ import math
 import itertools
 import random
 import numpy
+import uiobjects
 import player
 
 class GridTile(stellar.objects.Object):
@@ -18,7 +19,7 @@ class GridTile(stellar.objects.Object):
 		self.grid_x = x
 		self.grid_y = y
 
-		self.solid = self.type not in resources.NON_SOLID_SPRITES
+		self.solid = self.type in resources.SOLID_SPRITES
 
 		sprite = resources.TILE_REFERENCE[self.type]
 
@@ -84,21 +85,25 @@ class Bullet(tools.GameObject):
 
 		for zomb in self.room.zombies:
 			if zomb.point_inside(self.get_position()):
+				zomb.shot()
 				self.kill(reason="hit enemy")
 				return
 
 	def logic(self):
-		for _i in xrange(self.speed):
-			self.move_by(self.ostepx, self.ostepy)
-			self.age += 1
-			self.check_life()
-			if not self.enabled:
-				break
+		if not self.room.paused:
+			for _i in xrange(self.speed):
+				self.move_by(self.ostepx, self.ostepy)
+				self.age += 1
+				self.check_life()
+				if not self.enabled:
+					break
 
 class Zombie(tools.GameObject):
 	def __init__(self):
 		tools.GameObject.__init__(self)
 		self.move_speed = 20
+
+		self.health = random.randint(3, 5)
 
 		walk_left = stellar.sprites.Animation(*resources.ZOMBIE_LEFT)
 		walk_right = stellar.sprites.Animation(*resources.ZOMBIE_RIGHT)
@@ -113,6 +118,19 @@ class Zombie(tools.GameObject):
 		self.add_sprite("walk_right", walk_right)
 		self.set_sprite("walk_right")
 
+	def kill(self, reason="unspecified"):
+		self.room.zombies.remove(self)
+		self.room.game_objects.remove(self)
+		stellar.log("Zombie died, reason: %s" % reason)
+		self.disable()
+
+	def shot(self):
+		self.health -= 1
+		if self.health:
+			stellar.log("Zombie got shot, %s health remaining" % self.health)
+		else:
+			self.kill(reason="shot")
+
 	def step_left(self):
 		# self.move_by(-self.move_speed, 0)
 		pass
@@ -122,7 +140,8 @@ class Zombie(tools.GameObject):
 		pass
 
 	def logic(self):
-		self.move_by(1, 0)
+		if not self.room.paused:
+			self.move_by(1, 0)
 
 class Room(stellar.rooms.Room):
 	def __init__(self):
@@ -130,6 +149,8 @@ class Room(stellar.rooms.Room):
 		self.game_objects = []
 		self.zombies = []
 		self.bullets = []
+
+		self.paused = False
 
 		self.grid = {}
 
@@ -150,7 +171,7 @@ class Room(stellar.rooms.Room):
 			x, y = tile.x, tile.y
 			typ = tile["tile"]
 			nt = GridTile(x, y, typ=typ, tilesize=self.tilesize)
-			self.add_object(nt)
+			nt.room = self
 			self.grid[x, y] = nt
 
 
@@ -162,6 +183,41 @@ class Room(stellar.rooms.Room):
 		self.add_object(self.playerhb)
 
 		self.add_zombie(300, 300)
+
+		self.add_object(uiobjects.Revolver())
+
+		self.menu_init()
+
+	def pause(self):
+		self.paused = True
+		self.menu_open()
+
+	def unpause(self):
+		self.paused = False
+		self.menu_close()
+
+	def menu_init(self):
+		self.menu = {
+			"grey": uiobjects.GreyOut()
+		}
+		for el in self.menu:
+			self.menu[el].disable()
+			self.add_object(self.menu[el])
+
+	def menu_open(self):
+		for el in self.menu:
+			self.menu[el].enable()
+
+	def menu_close(self):
+		for el in self.menu:
+			self.menu[el].disable()
+
+	def menu_step(self, buttons, mousepos):
+		for el in self.menu:
+			obj = self.menu[el]
+			obj._logic()
+			obj._control(buttons, mousepos)
+			obj._draw()
 
 	def add_zombie(self, *posn):
 		nz = Zombie()
@@ -186,134 +242,146 @@ class Room(stellar.rooms.Room):
 		self.playerhb.move_to(cntr[0]-(self.playerhb.width/2.0), cntr[1])
 		self.slope = self.size[1]/float(self.size[0])
 
+		spawn = (257, 238)
+		self.cam_x = spawn[0] * self.tilesize
+		self.cam_y = spawn[1] * self.tilesize
+
 	def logic(self):
 		self.shoot_cooldown.frame()
 
 	# Manual draw function
 	def _draw(self):
-		self.game.screen.fill(self.background)
+		if not self.paused:
+			self.game.screen.fill(self.background)
 
-		drawbuffer = 1
-		x_wid = int(math.ceil(self.size[0] / self.tilesize))
-		y_wid = int(math.ceil(self.size[1] / self.tilesize))
-		cam_gx = int(math.floor(self.cam_x / self.tilesize))
-		cam_gy = int(math.floor(self.cam_y / self.tilesize))
-		x_range = xrange(cam_gx-drawbuffer, cam_gx+x_wid+drawbuffer)
-		y_range = xrange(cam_gy-drawbuffer, cam_gy+y_wid+drawbuffer)
+			drawbuffer = 1
+			x_wid = math.ceil(self.size[0] / self.tilesize)
+			y_wid = math.ceil(self.size[1] / self.tilesize)
+			cam_gx = math.floor(self.cam_x / self.tilesize)
+			cam_gy = math.floor(self.cam_y / self.tilesize)
+			x_range = xrange(int(cam_gx-drawbuffer), int(cam_gx+x_wid)+drawbuffer)
+			y_range = xrange(int(cam_gy-drawbuffer), int(cam_gy+y_wid)+drawbuffer)
 
-		for x, y in itertools.product(x_range, y_range):
-			try:
-				obj = self.grid[x, y]
-				obj.x = (x * self.tilesize) - self.cam_x
-				obj.y = (y * self.tilesize) - self.cam_y
-				obj.draw()
-			except KeyError:
-				pass
+			for x in x_range:
+				for y in y_range:
+					try:
+						obj = self.grid[x, y]
+						obj.x = (x * self.tilesize) - self.cam_x
+						obj.y = (y * self.tilesize) - self.cam_y
+						obj.draw()
+					except KeyError:
+						pass
 
-		for obj in self.game_objects:
-			if obj.enabled:
-				obj.x = obj.game_x - self.cam_x
-				obj.y = obj.game_y - self.cam_y
-				obj.draw()
+			for obj in self.game_objects:
+				if obj.enabled:
+					obj.x = obj.game_x - self.cam_x
+					obj.y = obj.game_y - self.cam_y
+					obj.draw()
 
-		for fixture, posn in self.fixtures:
-			fixture.draw(self, posn)
+			for fixture, posn in self.fixtures:
+				fixture.draw(self, posn)
 
-		for obj in self.objects:
-			obj._draw()
+			for obj in self.objects:
+				obj._draw()
 
-		self.draw()
+			self.draw()
 
 	def control(self, buttons, mousepos):
-		mouseX, mouseY = mousepos
-		key_input = False
-		deltaX = 0
-		deltaY = 0
+		if not self.paused:
+			mouseX, mouseY = mousepos
+			key_input = False
+			deltaX = 0
+			deltaY = 0
 
-		if buttons[stellar.keys.S_HELD][resources.CONTROL_UP]:
-			deltaY -= self.move_speed
-			key_input = True
-		if buttons[stellar.keys.S_HELD][resources.CONTROL_DOWN]:
-			deltaY += self.move_speed
-			key_input = True
-		if buttons[stellar.keys.S_HELD][resources.CONTROL_LEFT]:
-			deltaX -= self.move_speed
-			key_input = True
-		if buttons[stellar.keys.S_HELD][resources.CONTROL_RIGHT]:
-			deltaX += self.move_speed
-			key_input = True
+			if buttons[stellar.keys.S_HELD][resources.CONTROL_UP]:
+				deltaY -= self.move_speed
+				key_input = True
+			if buttons[stellar.keys.S_HELD][resources.CONTROL_DOWN]:
+				deltaY += self.move_speed
+				key_input = True
+			if buttons[stellar.keys.S_HELD][resources.CONTROL_LEFT]:
+				deltaX -= self.move_speed
+				key_input = True
+			if buttons[stellar.keys.S_HELD][resources.CONTROL_RIGHT]:
+				deltaX += self.move_speed
+				key_input = True
 
-		if buttons[stellar.keys.S_PUSHED][stellar.keys.M_1] and self.shoot_cooldown.is_done():
-			self.shoot_cooldown.reset()
-			random.choice(resources.GUN_SHOTS).play()
-			x = self.cam_x + (self.size[0]/2)
-			y = self.cam_y + (self.size[1]/2)
-			targetX = mouseX + self.cam_x
-			targetY = mouseY + self.cam_y
-			bullet = Bullet(x, y, (targetX, targetY))
-			self.bullets.append(bullet)
-			self.add_gameobject(bullet)
+			# if buttons[stellar.keys.S_PUSHED][stellar.keys.K_ESCAPE]:
+			# 	self.pause()
 
-			deltaX -= bullet.ostepx
-			deltaY -= bullet.ostepy
+			if buttons[stellar.keys.S_PUSHED][stellar.keys.M_1] and self.shoot_cooldown.is_done():
+				self.shoot_cooldown.reset()
+				random.choice(resources.GUN_SHOTS).play()
+				x = self.cam_x + (self.size[0]/2)
+				y = self.cam_y + (self.size[1]/2)
+				targetX = mouseX + self.cam_x
+				targetY = mouseY + self.cam_y
+				bullet = Bullet(x, y, (targetX, targetY))
+				self.bullets.append(bullet)
+				self.add_gameobject(bullet)
 
-		if deltaY < 0:
-			if deltaX < 0:
-				self.player.direction = 1
-			elif deltaX > 0:
-				self.player.direction = 3
+				deltaX -= bullet.ostepx*2
+				deltaY -= bullet.ostepy*2
+
+			if deltaY < 0:
+				if deltaX < 0:
+					self.player.direction = 1
+				elif deltaX > 0:
+					self.player.direction = 3
+				else:
+					self.player.direction = 2
+			elif deltaY > 0:
+				if deltaX < 0:
+					self.player.direction = 7
+				elif deltaX > 0:
+					self.player.direction = 5
+				else:
+					self.player.direction = 6
 			else:
-				self.player.direction = 2
-		elif deltaY > 0:
-			if deltaX < 0:
-				self.player.direction = 7
-			elif deltaX > 0:
-				self.player.direction = 5
+				if deltaX < 0:
+					self.player.direction = 8
+				elif deltaX > 0:
+					self.player.direction = 4
+				else:
+					self.player.direction = 0
+
+			midX, midY = self.center()
+			if mouseY < midY:
+				if mouseX < midX:
+					self.player.face_direction = 0
+				else:
+					self.player.face_direction = 1
 			else:
-				self.player.direction = 6
+				if mouseX < midX:
+					self.player.face_direction = 3
+				else:
+					self.player.face_direction = 2
+
+			self.player.moving = bool(self.player.direction) and key_input
+
+			deltaX, deltaY = self.playerhb.check_valid(deltaX, deltaY)
+
+			pos = self.line_pos(mouseX) > mouseY
+			neg = self.line_neg(mouseX) > mouseY
+
+			if self.player.backwards:
+				self.move_speed = self.slowed_speed
+			else:
+				self.move_speed = self.max_speed
+
+			if (pos) and (not neg):
+				self.player.m_direction = 0
+			if (pos) and (neg):
+				self.player.m_direction = 1
+			if (not pos) and (neg):
+				self.player.m_direction = 2
+			if (not pos) and (not neg):
+				self.player.m_direction = 3
+
+			self.cam_x += deltaX
+			self.cam_y += deltaY
 		else:
-			if deltaX < 0:
-				self.player.direction = 8
-			elif deltaX > 0:
-				self.player.direction = 4
-			else:
-				self.player.direction = 0
-
-		midX, midY = self.center()
-		if mouseY < midY:
-			if mouseX < midX:
-				self.player.face_direction = 0
-			else:
-				self.player.face_direction = 1
-		else:
-			if mouseX < midX:
-				self.player.face_direction = 3
-			else:
-				self.player.face_direction = 2
-
-		self.player.moving = bool(self.player.direction) and key_input
-
-		deltaX, deltaY = self.playerhb.check_valid(deltaX, deltaY)
-
-		pos = self.line_pos(mouseX) > mouseY
-		neg = self.line_neg(mouseX) > mouseY
-
-		if self.player.backwards:
-			self.move_speed = self.slowed_speed
-		else:
-			self.move_speed = self.max_speed
-
-		if (pos) and (not neg):
-			self.player.m_direction = 0
-		if (pos) and (neg):
-			self.player.m_direction = 1
-		if (not pos) and (neg):
-			self.player.m_direction = 2
-		if (not pos) and (not neg):
-			self.player.m_direction = 3
-
-		self.cam_x += deltaX
-		self.cam_y += deltaY
+			self.menu_step(buttons, mousepos)
 
 	def draw(self):
 		if self.game.debug:

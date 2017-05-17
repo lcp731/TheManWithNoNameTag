@@ -8,6 +8,8 @@ TILESIZE = 64
 LEFTY_SCALE = 2.0
 ZOMBIE_SCALE = 2.0
 
+GAME_SIZE = (1300, 800)
+
 CONTROL_UP = stellar.keys.K_w
 CONTROL_DOWN = stellar.keys.K_s
 CONTROL_LEFT = stellar.keys.K_a
@@ -23,7 +25,7 @@ AUDIO_HOVER_CLICK = stellar.sound.Effect("resources/audio/click.wav")
 AUDIO_PRESS_CLICK = stellar.sound.Effect("resources/audio/click4.wav")
 
 LEVEL_TEST = tools.legacy_parse_level("resources/levels/beersy.lvl")
-LEVEL = tools.parse_level("resources/levels/newtest.lvl")
+LEVEL = tools.parse_level("resources/levels/final.lvl")
 
 TILE_FILENAMES = os.listdir("resources/images/tiles/")
 TILE_REFERENCE = {}
@@ -104,7 +106,7 @@ stellar.tools.transform_sprites(_ZOMBIE, ZOMBIE_SCALE)
 # for posn, tile in zip(tools.itergrid(12, 12), _TILESET):
 # 	TILE_REFERENCE[posn] = tile
 
-NON_SOLID_SPRITES = [1, 2, 3, 4, 5, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+SOLID_SPRITES = [1, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 36, 44, 45, 47, 48, 50] + range(52, 82)
 
 # LEFTY_ARM_DOWN = stellar.sprites.Image("resources/images/leftyarm/down.png").perma_scale(2.0)
 # LEFTY_ARM_DOWNLEFT = stellar.sprites.Image("resources/images/leftyarm/downleft.png").perma_scale(2.0)

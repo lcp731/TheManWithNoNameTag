@@ -20,6 +20,8 @@ class Player(stellar.objects.Object):
 		self.backwards = False
 		self.moving = False
 
+		self.arm_on_top = False
+
 		spr_standing_forward_l = stellar.sprites.Animation(*resources.LEFTY_STAND_FORWARD_L)
 		spr_standing_backward_l = stellar.sprites.Animation(*resources.LEFTY_STAND_BACKWARD_L)
 		spr_standing_forward_r = stellar.sprites.Animation(*resources.LEFTY_STAND_FORWARD_R)
@@ -90,18 +92,96 @@ class Player(stellar.objects.Object):
 		if not self.moving:
 			if self.m_direction == 0:
 				self.arm.set_sprite("left")
-				if self.face_direction == 1:
-					pass
-				else:
+				if self.face_direction == 0:
+					self.arm_on_top = False
 					x, y = self.get_position()
-					self.arm.move_to(x-47, y-75)
+					self.arm.move_to(x+50, y+40)
+				if self.face_direction == 3:
+					self.arm_on_top = True
+					x, y = self.get_position()
+					self.arm.move_to(x+75, y+50)
+			if self.m_direction == 1:
+				if self.face_direction == 0:
+					self.arm.set_sprite("left")
+					self.arm_on_top = False
+					x, y = self.get_position()
+					self.arm.move_to(x+50, y+40)
+				if self.face_direction == 1:
+					self.arm.set_sprite("right")
+					self.arm_on_top = True
+					x, y = self.get_position()
+					self.arm.move_to(x+75, y+40)
+			if self.m_direction == 2:
+				self.arm.set_sprite("right")
+				if self.face_direction == 1:
+					self.arm_on_top = True
+					x, y = self.get_position()
+					self.arm.move_to(x+75, y+40)
+				if self.face_direction == 2:
+					self.arm_on_top = False
+					x, y = self.get_position()
+					self.arm.move_to(x+75, y+50)
+			if self.m_direction == 3:
+				if self.face_direction == 2:
+					self.arm.set_sprite("right")
+					self.arm_on_top = False
+					x, y = self.get_position()
+					self.arm.move_to(x+75, y+50)
+				if self.face_direction == 3:
+					self.arm.set_sprite("left")
+					self.arm_on_top = True
+					x, y = self.get_position()
+					self.arm.move_to(x+75, y+50)
+		else:
+			if self.current_sprite == "running_fl":
+				self.arm.set_sprite("left")
+				self.arm_on_top = True
+				x, y = self.get_position()
+				self.arm.move_to(x+65, y+40)
+			if self.current_sprite == "running_bl":
+				self.arm.set_sprite("left")
+				self.arm_on_top = False
+				x, y = self.get_position()
+				self.arm.move_to(x+45, y+40)
+			if self.current_sprite == "running_fr":
+				self.arm.set_sprite("right")
+				self.arm_on_top = False
+				x, y = self.get_position()
+				self.arm.move_to(x+75, y+40)
+			if self.current_sprite == "running_br":
+				self.arm.set_sprite("right")
+				self.arm_on_top = False
+				x, y = self.get_position()
+				self.arm.move_to(x+60, y+40)
 
-		if self.m_direction == 1:
-			pass
-		if self.m_direction == 2:
-			self.arm.set_sprite("right")
-		if self.m_direction == 3:
-			pass
+			if self.current_sprite == "backwards_fl":
+				self.arm.set_sprite("left")
+				self.arm_on_top = False
+				x, y = self.get_position()
+				self.arm.move_to(x+30, y+35)
+			if self.current_sprite == "backwards_bl":
+				self.arm.set_sprite("left")
+				self.arm_on_top = False
+				x, y = self.get_position()
+				self.arm.move_to(x+30, y+35)
+			if self.current_sprite == "backwards_fr":
+				self.arm.set_sprite("right")
+				self.arm_on_top = False
+				x, y = self.get_position()
+				self.arm.move_to(x+30, y+35)
+			if self.current_sprite == "backwards_br":
+				self.arm.set_sprite("right")
+				self.arm_on_top = False
+				x, y = self.get_position()
+				self.arm.move_to(x+30, y+35)
+
+
+		# if self.m_direction == 1:
+		# 	pass
+		# if self.m_direction == 2:
+		# 	self.arm.set_sprite("right")
+		# if self.m_direction == 3:
+		# 	pass
 
 		# One hell of an if statement
 		# PS: it's for sprite selection just ignore it
@@ -148,14 +228,12 @@ class Player(stellar.objects.Object):
 						backwards = True
 			if self.m_direction == 3:
 				if self.face_direction == 2:
-					self.set_sprite("downright")
 					if self.direction in [4, 5, 6]:
 						self.set_sprite("running_fr")
 					else:
 						self.set_sprite("backward_fr")
 						backwards = True
 				if self.face_direction == 3:
-					self.set_sprite("downleft")
 					if self.direction in [6, 7, 8]:
 						self.set_sprite("running_fl")
 					else:
@@ -176,6 +254,14 @@ class Player(stellar.objects.Object):
 
 		self.backwards = backwards
 
+	def _draw(self):
+		if self.arm_on_top:
+			self.get_current_sprite().draw(self.room, self.get_position(), self.scale)
+			self.arm.player_draw()
+		else:
+			self.arm.player_draw()
+			self.get_current_sprite().draw(self.room, self.get_position(), self.scale)
+
 class PlayerArm(stellar.objects.Object):
 	def __init__(self):
 		stellar.objects.Object.__init__(self)
@@ -191,17 +277,9 @@ class PlayerArm(stellar.objects.Object):
 
 		self.set_sprite("left")
 
+
 	# def _draw(self):
-	# 	ogrect = self.get_current_sprite().orig_surf.get_rect()
-	# 	rect = self.get_current_sprite().surf.get_rect()
-	# 	x, y = self.get_position()
-	# 	x -= rect.width
-	# 	y -= rect.height
-
-	# 	self.get_current_sprite().draw(self.room, (x, y), self.scale)
-
-	def _draw(self):
-		pass
+	# 	pass
 
 	def control(self, buttons, pos):
 		mouseX, mouseY = pos
@@ -216,14 +294,23 @@ class PlayerArm(stellar.objects.Object):
 			angle = angle + 90
 		self.get_current_sprite().tilt(angle)
 
+	def player_draw(self):
+		ogrect = self.get_current_sprite().orig_surf.get_rect()
+		rect = self.get_current_sprite().surf.get_rect()
+		x, y = self.get_position()
+		x -= rect.width
+		y -= rect.height
+
+		self.get_current_sprite().draw(self.room, (x, y), self.scale)
+
+	def _draw(self):
+		pass
+
 class PlayerMovementHitbox(stellar.objects.Object):
 	def __init__(self, player):
 		stellar.objects.Object.__init__(self)
 		self.player = player
 		self.width, self.height = self.player.get_current_sprite().current().size
-		self.width *= resources.LEFTY_SCALE
-		self.width *= 0.85
-		self.height *= resources.LEFTY_SCALE
 		self.height /= 2.0
 		self.add_sprite("default", stellar.sprites.Box((255, 0, 0), self.width, self.height))
 		self.set_sprite("default")
