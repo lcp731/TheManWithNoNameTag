@@ -31,8 +31,9 @@ class Game(stellar.base.Base):
 	def start_game(self):
 		stellar.log("Start button pressed")
 		stellar.log("Starting music")
+		resources.AUDIO_MAIN.looping = True
 		resources.AUDIO_MAIN.play()
-		resources.AUDIO_MAIN.set_volume(0.2)
+		resources.AUDIO_MAIN.set_volume(0.5)
 		self.set_room("room_game")
 
 game = Game()

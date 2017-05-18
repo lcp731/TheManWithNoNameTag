@@ -154,27 +154,22 @@ class Player(stellar.objects.Object):
 				x, y = self.get_position()
 				self.arm.move_to(x+60, y+40)
 
-		if self.current_sprite == "backwards_fl":
-			print "fl"
+		if self.current_sprite == "backward_fl":
 			self.arm.set_sprite("left")
 			self.arm_on_top = False
 			x, y = self.get_position()
 			self.arm.move_to(x+30, y+0)
-		if self.current_sprite == "backwards_bl":
-			print "bl"
+		if self.current_sprite == "backward_bl":
 			self.arm.set_sprite("left")
 			self.arm_on_top = False
 			x, y = self.get_position()
-			print x, y
 			self.arm.move_to(x+30, y+25)
-		if self.current_sprite == "backwards_fr":
-			print "fr"
+		if self.current_sprite == "backward_fr":
 			self.arm.set_sprite("right")
 			self.arm_on_top = False
 			x, y = self.get_position()
 			self.arm.move_to(x+30, y+25)
-		if self.current_sprite == "backwards_br":
-			print "br"
+		if self.current_sprite == "backward_br":
 			self.arm.set_sprite("right")
 			self.arm_on_top = False
 			x, y = self.get_position()

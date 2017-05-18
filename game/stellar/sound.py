@@ -65,6 +65,7 @@ class Music(Sound):
 	def __init__(self, path):
 		Sound.__init__(self)
 		self.path = path
+		self.looping = False
 
 	def set_volume(self, val):
 		self.volume = val
@@ -73,8 +74,10 @@ class Music(Sound):
 	def _play(self):
 		pygame.mixer.init()
 		pygame.mixer.music.load(self.path)
-		pygame.mixer.music.play()
-
+		if self.looping:
+			pygame.mixer.music.play(-1)
+		else:
+			pygame.mixer.music.play()
 
 	def play(self):
 		thread = threading.Thread(target=self._play)
