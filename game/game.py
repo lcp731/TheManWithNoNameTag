@@ -30,9 +30,9 @@ class Game(stellar.base.Base):
 	# Called by the menu buttons when 'start' is pressed
 	def start_game(self):
 		stellar.log("Start button pressed")
-		# stellar.log("Starting music")
-		# resources.AUDIO_ZOMBIE_HIT_SQUAD.play()
-		# resources.AUDIO_ZOMBIE_HIT_SQUAD.set_volume(0.2)
+		stellar.log("Starting music")
+		resources.AUDIO_MAIN.play()
+		resources.AUDIO_MAIN.set_volume(0.2)
 		self.set_room("room_game")
 
 game = Game()

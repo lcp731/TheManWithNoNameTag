@@ -20,6 +20,7 @@ FONT_ARIAL_WHITE_12 = stellar.tools.Font("resources/fonts/arial.ttf", 12, (255, 
 FONT_WESTERN_WHITE_30 = stellar.tools.Font("resources/fonts/Pixel-Western.ttf", 30, (255, 255, 255))
 
 AUDIO_ZOMBIE_HIT_SQUAD = stellar.sound.Music("resources/audio/Zombie_Hit_Squad.mp3")
+AUDIO_MAIN = stellar.sound.Music("resources/audio/No_Nametag_Final_Maybe.mp3")
 AUDIO_GUNSHOT = stellar.sound.Effect("resources/audio/GUN-Shot.wav")
 AUDIO_HOVER_CLICK = stellar.sound.Effect("resources/audio/click.wav")
 AUDIO_PRESS_CLICK = stellar.sound.Effect("resources/audio/click4.wav")

@@ -277,9 +277,9 @@ class Room(stellar.rooms.Room):
 		self.playerhb.move_to(cntr[0]-(self.playerhb.width/2.0), cntr[1])
 		self.slope = self.size[1]/float(self.size[0])
 
-		spawn = (257, 238)
-		self.cam_x = spawn[0] * self.tilesize
-		self.cam_y = spawn[1] * self.tilesize
+		spawn = (251, 244)
+		self.cam_x = (spawn[0] * self.tilesize) - (self.size[0]/2)
+		self.cam_y = (spawn[1] * self.tilesize) - (self.size[1]/2)
 
 		self.kiddo.move_to(spawn[0] * self.tilesize, spawn[1] * self.tilesize)
 
