@@ -58,8 +58,8 @@ class Bullet(tools.GameObject):
 		self.ostepx = float(self.target_x-self.start_x)/steps_number
 		self.ostepy = float(self.target_y-self.start_y)/steps_number
 
-		self.step_x = self.ostepx * self.speed
-		self.step_y = self.ostepy * self.speed
+		self.move_by(0, -25)
+		self.move_by(self.ostepx * 50, self.ostepy * 50)
 
 		# for i in range(steps_number+1):
 		# 	self.steps.append((int(self.start_x + stepx*i), int(self.start_y + stepy*i)))
