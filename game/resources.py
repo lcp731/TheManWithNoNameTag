@@ -84,6 +84,14 @@ _LEFTY = stellar.tools.load_sheet(
 	*_LEFTY_POINTS
 )
 
+_KIDDO = stellar.tools.load_sheet(
+	stellar.sprites.Image("resources/images/kiddo.png", transparent_bkg=True),
+	(0, 0, 21, 32),
+	(21, 0, 21, 32),
+	(0, 32, 21, 32),
+	(21, 32, 21, 32)
+)
+
 BULLET = stellar.sprites.Image("resources/images/bullet.png", transparent_bkg=True)
 
 # _TILESET = stellar.tools.load_sheet(
@@ -99,6 +107,7 @@ SPLASH = stellar.tools.load_sheet(
 stellar.tools.transform_sprites(_LEFTY, LEFTY_SCALE)
 stellar.tools.transform_sprites(_LEFTY_STAND, LEFTY_SCALE)
 stellar.tools.transform_sprites(_ZOMBIE, ZOMBIE_SCALE)
+stellar.tools.transform_sprites(_KIDDO, 2)
 # stellar.tools.transform_sprites([BULLET], 2)
 # stellar.tools.transform_sprites(_TILESET, TILESIZE/32.0)
 
@@ -107,6 +116,7 @@ stellar.tools.transform_sprites(_ZOMBIE, ZOMBIE_SCALE)
 # 	TILE_REFERENCE[posn] = tile
 
 SOLID_SPRITES = [1, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 36, 44, 45, 47, 48, 50] + range(52, 82)
+KNOCKBACK = [44, 45, 48]
 
 # LEFTY_ARM_DOWN = stellar.sprites.Image("resources/images/leftyarm/down.png").perma_scale(2.0)
 # LEFTY_ARM_DOWNLEFT = stellar.sprites.Image("resources/images/leftyarm/downleft.png").perma_scale(2.0)
@@ -154,7 +164,7 @@ GUN_SHOTS = [
 	stellar.sound.Effect("resources/audio/gun/Shot6.wav")
 ]
 
-LEFTY_FOOTSTEPS = [
+LEFTY_FOOTSTEPS_GRAVEL = [
 	stellar.sound.Effect("resources/audio/footsteps/Footsteps, Gravel 1.wav"),
 	stellar.sound.Effect("resources/audio/footsteps/Footsteps, Gravel 2.wav"),
 	stellar.sound.Effect("resources/audio/footsteps/Footsteps, Gravel 3.wav"),
@@ -165,5 +175,22 @@ LEFTY_FOOTSTEPS = [
 	stellar.sound.Effect("resources/audio/footsteps/Footsteps, Gravel 8.wav"),
 	stellar.sound.Effect("resources/audio/footsteps/Footsteps, Gravel 9.wav")
 ]
+LEFTY_FOOTSTEPS = [
+	stellar.sound.Effect("resources/audio/footsteps/Lefty Footsteps 1.wav"),
+	stellar.sound.Effect("resources/audio/footsteps/Lefty Footsteps 2.wav"),
+	stellar.sound.Effect("resources/audio/footsteps/Lefty Footsteps 3.wav"),
+	stellar.sound.Effect("resources/audio/footsteps/Lefty Footsteps 4.wav"),
+	stellar.sound.Effect("resources/audio/footsteps/Lefty Footsteps 5.wav"),
+	stellar.sound.Effect("resources/audio/footsteps/Lefty Footsteps 6.wav"),
+	stellar.sound.Effect("resources/audio/footsteps/Lefty Footsteps 7.wav"),
+	stellar.sound.Effect("resources/audio/footsteps/Lefty Footsteps 8.wav"),
+	stellar.sound.Effect("resources/audio/footsteps/Lefty Footsteps 9.wav")
+]
+
+KIDDO_RUN_LEFT = [_KIDDO[2], _KIDDO[3]]
+KIDDO_RUN_RIGHT =  map(lambda z: tools.clone(z).flip(True, False), KIDDO_RUN_LEFT)
+
+KIDDO_HELP_LEFT = [_KIDDO[0], _KIDDO[1]]
+KIDDO_HELP_RIGHT =  map(lambda z: tools.clone(z).flip(True, False), KIDDO_HELP_LEFT)
 
 map(lambda x: x.set_volume(0.5), LEFTY_FOOTSTEPS)

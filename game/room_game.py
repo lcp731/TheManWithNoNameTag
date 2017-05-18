@@ -144,6 +144,28 @@ class Zombie(tools.GameObject):
 		if not self.room.paused:
 			self.move_by(1, 0)
 
+class Kiddo(tools.GameObject):
+	def __init__(self):
+		tools.GameObject.__init__(self)
+
+		run_left = stellar.sprites.Animation(*resources.KIDDO_RUN_LEFT)
+		run_right = stellar.sprites.Animation(*resources.KIDDO_RUN_RIGHT)
+		help_left = stellar.sprites.Animation(*resources.KIDDO_HELP_LEFT)
+		help_right = stellar.sprites.Animation(*resources.KIDDO_HELP_LEFT)
+
+		run_left.set_rate(5)
+		run_right.set_rate(5)
+		help_left.set_rate(20)
+		help_right.set_rate(20)
+
+		self.add_sprite("run_left", run_left)
+		self.add_sprite("run_right", run_right)
+
+		self.add_sprite("help_left", help_left)
+		self.add_sprite("help_right", help_right)
+
+		self.set_sprite("help_left")
+
 class Room(stellar.rooms.Room):
 	def __init__(self):
 		stellar.rooms.Room.__init__(self)
@@ -191,6 +213,9 @@ class Room(stellar.rooms.Room):
 		self.add_object(self.player)
 		self.add_object(self.playerarm)
 		self.add_object(self.playerhb)
+
+		self.kiddo = Kiddo()
+		self.add_gameobject(self.kiddo)
 
 		self.add_zombie(300, 300)
 
@@ -255,6 +280,8 @@ class Room(stellar.rooms.Room):
 		spawn = (257, 238)
 		self.cam_x = spawn[0] * self.tilesize
 		self.cam_y = spawn[1] * self.tilesize
+
+		self.kiddo.move_to(spawn[0] * self.tilesize, spawn[1] * self.tilesize)
 
 	def logic(self):
 		self.shoot_cooldown.frame()
