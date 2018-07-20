@@ -6,5 +6,6 @@ The game itself was written in Python using PyGame, build on top of my custom-wr
 
 The game features entirely custom artwork, music, and sound effects. Feel free to check out [/game/resources/](https://github.com/wg4568/TheManWithNoNameTag/tree/master/game/resources) to look at the assets without downloading the entire game.
 
+![](https://raw.githubusercontent.com/wg4568/TheManWithNoNameTag/master/game/resources/images/lefty.png "Main Character Sprites")
 ![](https://i.imgur.com/f1QK344.png "Title Screen")
 ![](https://i.imgur.com/BITzNHO.png "Main Game")
